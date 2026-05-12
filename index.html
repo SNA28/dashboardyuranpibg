@@ -108,7 +108,8 @@
                         <select id="selKelas" class="form-select" onchange="filterMurid()">
                             <option value="">-- Pilih Kelas --</option>
                             <option value="1 Daffodils">1 Daffodils</option>
-                            <option value="1 Camellia">1 Camellia</option>
+<option value="1 Camellia">1 Camellia</option>
+<option value="2 Daffodils">2 Daffodils</option>
                         </select>
                     </div>
                     <div class="col-md-4">
@@ -135,11 +136,15 @@
             </div>
 
             <div class="glass-card">
-                <h6 class="text-gold mb-3">Senarai Tunggakan (Belum / Separuh)</h6>
-                <div class="table-responsive scroll-area">
-                    <table class="table table-custom table-hover">
-                        <thead>
-                            <tr><th>Nama</th><th>Kelas</th><th>Dah Bayar</th><th>Baki</th><th>Status</th></tr>
+                <const firebaseConfig = {
+  apiKey: "AIzaSyBQeOvoELEHNAG1uFRHV5Vi9XsM561GxH4",
+  authDomain: "sistem-yuran-pibg.firebaseapp.com",
+  databaseURL: "https://sistem-yuran-pibg-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "sistem-yuran-pibg",
+  storageBucket: "sistem-yuran-pibg.firebasestorage.app",
+  messagingSenderId: "1035670078486",
+  appId: "1:1035670078486:web:adbc719663e5f9b5a1e137",
+  measurementId: "G-ZK4NSF1QZJ"
                         </thead>
                         <tbody id="isiTunggakan"></tbody>
                     </table>
@@ -185,7 +190,7 @@
         {n:"AFIQAH BINTI HALIDZAN", k:"1 Camellia"},
         {n:"AL ZAHRA ROSE BINTI JEFRY", k:"1 Camellia"}
     ];
-    const senaraiK = ["1 Daffodils", "1 Camellia"];
+    const senaraiK = ["const senaraiK = ["1 Daffodils", "1 Camellia", "2 Daffodils", "2 Camellia", "3 Daffodils"];"];
     const SASARAN_INDIVIDU = 170;
 
     window.filterMurid = function() {
