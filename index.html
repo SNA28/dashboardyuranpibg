@@ -105,12 +105,21 @@
                 <h6 class="text-gold mb-3"><i class="fas fa-plus-circle me-2"></i>Daftar Bayaran Baru</h6>
                 <div class="row g-3">
                     <div class="col-md-4">
-                        <select id="selKelas" class="form-select" onchange="filterMurid()">
-                            <option value="">-- Pilih Kelas --</option>
-                            <option value="1 Daffodils">1 Daffodils</option>
-<option value="1 Camellia">1 Camellia</option>
-<option value="2 Daffodils">2 Daffodils</option>
-                        </select>
+                      <select id="selKelas" class="form-select" onchange="filterMurid()">
+    <option value="">-- Pilih Kelas --</option>
+    <option value="1 Daffodils">1 Daffodils</option>
+    <option value="1 Camellia">1 Camellia</option>
+    <option value="2 Daffodils">2 Daffodils</option>
+    <option value="2 Camellia">2 Camellia</option>
+    <option value="3 Daffodils">3 Daffodils</option>
+    <option value="3 Camellia">3 Camellia</option>
+    <option value="4 Daffodils">4 Daffodils</option>
+    <option value="4 Camellia">4 Camellia</option>
+    <option value="5 Daffodils">5 Daffodils</option>
+    <option value="5 Camellia">5 Camellia</option>
+    <option value="6 Daffodils">6 Daffodils</option>
+    <option value="6 Camellia">6 Camellia</option>
+</select>
                     </div>
                     <div class="col-md-4">
                         <select id="selNama" class="form-select"><option value="">-- Pilih Murid --</option></select>
@@ -136,7 +145,15 @@
             </div>
 
             <div class="glass-card">
-                <cconst firebaseConfig = {
+               // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
   apiKey: "AIzaSyBQeOvoELEHNAG1uFRHV5Vi9XsM561GxH4",
   authDomain: "sistem-yuran-pibg.firebaseapp.com",
   databaseURL: "https://sistem-yuran-pibg-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -146,6 +163,10 @@
   appId: "1:1035670078486:web:adbc719663e5f9b5a1e137",
   measurementId: "G-ZK4NSF1QZJ"
 };
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
                         </thead>
                         <tbody id="isiTunggakan"></tbody>
                     </table>
