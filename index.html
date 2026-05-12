@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Yuran St. Anne's 2026</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { 
+            --deep-navy: #050c1d;
+            --royal-gold: #d4af37;
+            --bright-gold: #f7c948;
+            --glass: rgba(255, 255, 255, 0.08);
+            --finish-green: #21c87a;
+            --half-orange: #ff9800;
+            --none-red: #ff4d5e;
+        }
+
+        body { 
+            background: radial-gradient(circle at 50% 0%, #1a3a7a, var(--deep-navy) 70%);
+            background-attachment: fixed;
+            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            padding: 20px;
+        }
+
+        .header-section { text-align: center; margin-bottom: 30px; }
+        .header-section img { height: 130px; filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.5)); }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+        }
+
+        .stat-label { font-size: 0.7rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-val { font-size: 1.6rem; font-weight: 800; }
+        .text-gold { color: var(--bright-gold); }
+
+        .form-control, .form-select {
+            background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.2); color: white !important;
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, var(--royal-gold), var(--bright-gold));
+            border: none; color: #000; font-weight: 800; border-radius: 10px; padding: 10px; width: 100%;
+        }
+
+        .scroll-area { max-height: 350px; overflow-y: auto; }
+        .table-custom { font-size: 0.85rem; color: #fff; }
+        .badge-status { padding: 4px 8px; border-radius: 12px; font-size: 0.7rem; }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="header-section">
+        <img src="images.jpeg" alt="Logo St. Anne's">
+        <h3 class="text-gold mt-2">SISTEM PENGURUSAN YURAN 2026</h3>
+        <p class="small text-white-50">SASARAN KUTIPAN: 406 MURID</p>
+    </div>
+
+    <div class="row g-3 mb-4 text-center">
+        <div class="col-md-2">
+            <div class="glass-card" style="border-top: 4px solid var(--bright-gold)">
+                <div class="stat-label">Sasaran (406 Murid)</div>
+                <div class="stat-val text-gold">RM 69,020</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="glass-card" style="border-top: 4px solid #00f2ff">
+                <div class="stat-label">Kutipan Semasa (Total)</div>
+                <div class="stat-val" style="color: #00f2ff" id="totalSemasa">RM 0</div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="glass-card" style="border-top: 4px solid var(--finish-green)">
+                <div class="stat-label">Total PIBG (RM100)</div>
+                <div class="stat-val" style="color: var(--finish-green)" id="totalPIBG">RM 0</div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="glass-card" style="border-top: 4px solid var(--half-orange)">
+                <div class="stat-label">Total Tambahan (RM70)</div>
+                <div class="stat-val" style="color: var(--half-orange)" id="totalTambahan">RM 0</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="glass-card" style="border-top: 4px solid var(--none-red)">
+                <div class="stat-label">Murid Belum Bayar</div>
+                <div class="stat-val" style="color: var(--none-red)" id="countBelum">406</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7">
+            <div class="glass-card">
+                <h6 class="text-gold mb-3"><i class="fas fa-plus-circle me-2"></i>Daftar Bayaran Baru</h6>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <select id="selKelas" class="form-select" onchange="filterMurid()">
+                            <option value="">-- Pilih Kelas --</option>
+                            <option value="1 Daffodils">1 Daffodils</option>
+                            <option value="1 Camellia">1 Camellia</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <select id="selNama" class="form-select"><option value="">-- Pilih Murid --</option></select>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="date" id="selTarikh" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <select id="selJenis" class="form-select" onchange="cekLain()">
+                            <option value="170">PIBG + Tambahan (RM170)</option>
+                            <option value="100">PIBG Sahaja (RM100)</option>
+                            <option value="70">Tambahan Sahaja (RM70)</option>
+                            <option value="lain">Lain-lain Amount</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6" id="boxLain" style="display:none;">
+                        <input type="number" id="inputLain" class="form-control" placeholder="Masukkan Amaun RM">
+                    </div>
+                    <div class="col-md-12">
+                        <button class="btn btn-gold" onclick="simpan()">SIMPAN REKOD</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card">
+                <h6 class="text-gold mb-3">Senarai Tunggakan (Belum / Separuh)</h6>
+                <div class="table-responsive scroll-area">
+                    <table class="table table-custom table-hover">
+                        <thead>
+                            <tr><th>Nama</th><th>Kelas</th><th>Dah Bayar</th><th>Baki</th><th>Status</th></tr>
+                        </thead>
+                        <tbody id="isiTunggakan"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="glass-card text-center">
+                <h6 class="text-gold mb-3">Status Bayaran Murid (Bilangan)</h6>
+                <div style="max-width: 200px; margin: auto;">
+                    <canvas id="myChart"></canvas>
+                </div>
+            </div>
+
+            <div class="glass-card">
+                <h6 class="text-gold mb-3">Kutipan Mengikut Kelas (RM)</h6>
+                <table class="table table-custom table-sm">
+                    <tbody id="statKutipanKelas"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = { 
+        apiKey: "AIzaSy...", 
+        databaseURL: "https://stannes-pibg-default-rtdb.firebaseio.com", 
+        projectId: "stannes-pibg" 
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const dbRef = ref(db, 'yuran_2026');
+
+    const muridData = [
+        {n:"AAIRA SOPHEA BINTI HAZMEER", k:"1 Daffodils"},
+        {n:"AILEEN SURAIYA BINTI MUHAMMAD NURSYAHMI", k:"1 Daffodils"},
+        {n:"AFIQAH BINTI HALIDZAN", k:"1 Camellia"},
+        {n:"AL ZAHRA ROSE BINTI JEFRY", k:"1 Camellia"}
+    ];
+    const senaraiK = ["1 Daffodils", "1 Camellia"];
+    const SASARAN_INDIVIDU = 170;
+
+    window.filterMurid = function() {
+        const k = document.getElementById('selKelas').value;
+        const sel = document.getElementById('selNama');
+        sel.innerHTML = '<option value="">-- Pilih Murid --</option>';
+        muridData.filter(m => m.k === k).forEach(m => {
+            sel.innerHTML += `<option value="${m.n}">${m.n}</option>`;
+        });
+    };
+
+    window.cekLain = function() {
+        document.getElementById('boxLain').style.display = (document.getElementById('selJenis').value === 'lain') ? 'block' : 'none';
+    };
+
+    document.getElementById('selTarikh').valueAsDate = new Date();
+
+    window.simpan = function() {
+        const n = document.getElementById('selNama').value;
+        const k = document.getElementById('selKelas').value;
+        const t = document.getElementById('selTarikh').value;
+        const j = document.getElementById('selJenis').value;
+        let a = (j === 'lain') ? parseFloat(document.getElementById('inputLain').value) : parseFloat(j);
+
+        if(!n || isNaN(a)) return alert("Lengkapkan data!");
+        push(dbRef, { nama: n, kelas: k, amaun: a, jenis: j, tarikh: t, ts: Date.now() });
+    };
+
+    let chart;
+    onValue(dbRef, (snap) => {
+        const data = snap.val() || {};
+        const tableTunggakan = document.getElementById('isiTunggakan');
+        const boxRMKelas = document.getElementById('statKutipanKelas');
+        tableTunggakan.innerHTML = ''; boxRMKelas.innerHTML = '';
+        
+        let totalSemasa = 0, totalPIBG = 0, totalTambahan = 0;
+        let kRM = {}, muridBayar = {};
+
+        Object.values(data).forEach(r => {
+            totalSemasa += r.amaun;
+            kRM[r.kelas] = (kRM[r.kelas] || 0) + r.amaun;
+            muridBayar[r.nama] = (muridBayar[r.nama] || 0) + r.amaun;
+            
+            // Logik pecah jenis yuran
+            if(r.amaun === 170) { totalPIBG += 100; totalTambahan += 70; }
+            else if(r.amaun === 100) { totalPIBG += 100; }
+            else if(r.amaun === 70) { totalTambahan += 70; }
+            else { totalPIBG += r.amaun; } // Jika lain-lain, anggap masuk PIBG sementara
+        });
+
+        document.getElementById('totalSemasa').innerText = `RM ${totalSemasa}`;
+        document.getElementById('totalPIBG').innerText = `RM ${totalPIBG}`;
+        document.getElementById('totalTambahan').innerText = `RM ${totalTambahan}`;
+
+        let selesai = 0, separuh = 0;
+        muridData.forEach(m => {
+            const dah = muridBayar[m.n] || 0;
+            const baki = SASARAN_INDIVIDU - dah;
+            if(dah >= SASARAN_INDIVIDU) selesai++;
+            else {
+                if(dah > 0) separuh++;
+                tableTunggakan.innerHTML += `<tr><td>${m.n}</td><td>${m.k}</td><td>RM ${dah}</td><td class="text-danger">RM ${baki}</td>
+                <td><span class="badge-status ${dah === 0 ? 'bg-danger' : 'bg-warning text-dark'}">${dah === 0 ? 'BELUM' : 'SEPARUH'}</span></td></tr>`;
+            }
+        });
+
+        const belum = 406 - (selesai + separuh);
+        document.getElementById('countBelum').innerText = belum;
+
+        senaraiK.forEach(k => {
+            boxRMKelas.innerHTML += `<tr><td>${k}</td><td class="text-end text-gold fw-bold">RM ${kRM[k] || 0}</td></tr>`;
+        });
+
+        const ctx = document.getElementById('myChart');
+        if(chart) chart.destroy();
+        chart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Selesai', 'Separuh', 'Belum'],
+                datasets: [{ data: [selesai, separuh, belum], backgroundColor: ['#21c87a', '#ff9800', '#ff4d5e'], borderColor: 'transparent' }]
+            },
+            options: { plugins: { legend: { display: false } } }
+        });
+    });
+</script>
+</body>
+</html>
