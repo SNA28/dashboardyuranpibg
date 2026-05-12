@@ -143,24 +143,22 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-    // GANTI apiKey & databaseURL di bawah dengan data anda yang dalam mesej tadi
     const firebaseConfig = {
-        apiKey: "AIzaSyBQeOvoELEHNAG1uFRHV5Vi9XsM561GxH4",
-        authDomain: "sistem-yuran-pibg.firebaseapp.com",
-        databaseURL: "https://sistem-yuran-pibg-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "sistem-yuran-pibg",
-        storageBucket: "sistem-yuran-pibg.appspot.com",
-        messagingSenderId: "1035670078486",
-        appId: "1:1035670078486:web:adbc719663e5f9b5a1e137"
-    };
+      apiKey: "AIzaSyBQeOvoELEHNAG1uFRHV5Vi9XsM561GxH4",
+  authDomain: "sistem-yuran-pibg.firebaseapp.com",
+  databaseURL: "https://sistem-yuran-pibg-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "sistem-yuran-pibg",
+  storageBucket: "sistem-yuran-pibg.firebasestorage.app",
+  messagingSenderId: "1035670078486",
+  appId: "1:1035670078486:web:adbc719663e5f9b5a1e137",
+  measurementId: "G-ZK4NSF1QZJ"
+};
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const dbRef = ref(db, 'yuran_2026');
 
     const muridData = [
-        const muridData = [
         // 1 DAFFODILS
         {n:"AAIRA SOPHEA BINTI HAZMEER", k:"1 Daffodils"},
         {n:"AILEEN SURAIYA BINTI MUHAMMAD NURSYAHMI", k:"1 Daffodils"},
