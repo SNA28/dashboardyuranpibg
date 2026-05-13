@@ -12,13 +12,13 @@
         body { background-color: #f4f7f6; color: #333; }
         .header { background-color: #1a237e; color: white; padding: 30px 0; text-align: center; border-bottom: 5px solid #ffd700; }
         
-        /* Teknik untuk buang background putih pada logo */
+        /* Teknik Magic: Buang background putih lencana asal */
         .school-logo { 
             width: 120px; 
             height: auto; 
             margin-bottom: 10px; 
-            mix-blend-mode: multiply; /* Ini akan buat warna putih jadi telus */
-            filter: contrast(1.1); /* Tajamkan sedikit warna */
+            mix-blend-mode: multiply; /* Ini akan buat warna putih lencana jadi telus/navy */
+            filter: brightness(1.1) contrast(1.1);
         }
         
         .card { border: none; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
@@ -36,7 +36,7 @@
 
 <div class="header">
     <div class="container">
-        <img src="Gemini_Generated_Image_qhp3n2qhp3n2qhp3.png" alt="Logo" class="school-logo">
+        <img src="images.jpeg" alt="Logo" class="school-logo">
         <h2 class="fw-bold">SISTEM PENGURUSAN YURAN 2026</h2>
         <p>ST. ANNE'S CONVENT</p>
     </div>
@@ -94,12 +94,7 @@
                     <button class="btn btn-primary w-100" id="btnSimpan">SIMPAN REKOD</button>
                 </div>
             </div>
-
-            <div class="card">
-                <div class="card-body">
-                    <canvas id="pieChart"></canvas>
-                </div>
-            </div>
+            <div class="card"><div class="card-body"><canvas id="pieChart"></canvas></div></div>
         </div>
 
         <div class="col-lg-8">
@@ -109,40 +104,22 @@
                     <button class="btn btn-sm btn-light" id="btnDownload">Export CSV</button>
                 </div>
                 <div class="card-body">
-                    <ul class="nav nav-tabs mb-3" id="tabYuran">
+                    <ul class="nav nav-tabs mb-3">
                         <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#sudah">Sudah Bayar</button></li>
                         <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#belum">Belum Bayar</button></li>
                     </ul>
-
                     <div class="tab-content">
                         <div class="tab-pane fade show active" id="sudah">
-                            <div class="table-responsive" style="max-height: 400px;">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Nama Murid</th>
-                                            <th>Kelas</th>
-                                            <th>Amaun</th>
-                                            <th class="admin-only">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="listSudah"></tbody>
-                                </table>
-                            </div>
+                            <table class="table table-hover">
+                                <thead><tr><th>Nama Murid</th><th>Kelas</th><th>Amaun</th><th class="admin-only">Aksi</th></tr></thead>
+                                <tbody id="listSudah"></tbody>
+                            </table>
                         </div>
                         <div class="tab-pane fade" id="belum">
-                            <div class="table-responsive" style="max-height: 400px;">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Nama Murid</th>
-                                            <th>Kelas</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="listBelum"></tbody>
-                                </table>
-                            </div>
+                            <table class="table table-hover">
+                                <thead><tr><th>Nama Murid</th><th>Kelas</th><th>Status</th></tr></thead>
+                                <tbody id="listBelum"></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -171,14 +148,21 @@
     const db = getDatabase(app);
     const dbRef = ref(db, 'yuran_2026');
 
-    // Data Murid (Hanya sebahagian untuk contoh, kod asal anda lengkap)
     const rawData = {
         "1 Daffodils": ["AAIRA SOPHEA BINTI HAZMEER", "AILEEN SURAIYA BINTI MUHAMMAD NURSYAHMI", "AYRA NADHIRAH BINTI ABDUL RAZAK", "DEANDRA ADELYA BINTI MOHD KAMARUL SHAHID", "DIVYA A/P KUMARAN", "FATHIMA SHAZNA BINTI MANSOOR KHAN", "IZA IZZARA BINTI IZAT IZZUDIN", "KAAVYASREE A/P SASIDARAN", "KHAYLA AFEEYA BINTI RAZMAN FAIZ", "LEYVINIAA JAHYAVIKNES SHAN", "NUR AAFIYAH BINTI MUHAMMAD HAKIIM", "NUR AALIYA ZAHRA BINTI MUHAMMAD MUIZZUDDIN", "NUR AIRIS SOFEA BINTI MOHAMAD YUHANIF", "NUR AISYAH ZAHIRAH BINTI MUHAMMAD AKMAL", "NUR AULIYA SAFFIYAH BINTI MUHAMMAD FITRIASHRAF", "NUR MARISSA BINTI MOHD FITRI", "NUR RAISHA ZAFIRAH BINTI PAHROLRAZI", "NUR ZAHIRA BINTI SYAROLRIZAL", "NUREEN MIKAYLA BINTI RUSDI AZIZ", "NURUL AMIRAH SOFIA BINTI ABDULLAH", "PUTERI BALQIS BINTI KAMALRULZAMAN", "PUTERI QAYRA AFIYA BINTI MOHD AMIRUL ANUAR", "QURRATUL UMNI HANIYYA BINTI MOHD RIDZUAN", "RAJA NELISSA BINTI RAJA HAZREN", "RAPHEALLA MOHAN", "RIZQ RUMAISA BINTI MOHD RIZAL", "RUMAISHA BINTI AB ZILJALALI WALIKRAM", "SAGISHNA A/P DINNAISH", "SHAMITA MOHAN GANES", "SITI NURHAFIZAH BINTI HELMI", "SITI SUHAILA SYAHIRAH BINTI MUHAMAD SAIFULIZAM", "SOFIA NUR AISHAH BINTI MOHD ZAMRIE", "SOFIA NUR ZULAIKHA BINTI MOHD ZAMRIE", "SREESHA NAIR A/P JANATHERAN NAIR", "YUSRIENA DELISHA BINTI MOHAMAD YUSOF", "ZIA AINUL MARDHIAH BINTI MOHD ZAIM"],
-        "1 Camellia": ["AFIQAH BINTI HALIDZAN", "AL ZAHRA ROSE BINTI JEFRY", "AZZA ZINNIRAH BINTI MUHAMMAD ZARUL AZUANDI", "DHIA INARA BINTI MUHAMMAD ISHAM", "DHIA SOFEA AZZAHRA BINTI MOHD FAISAL", "DIAN SURFINA BINTI MOHD SAZALI", "HANAN INARA BINTI MOHD SHAHRIN", "HUZAIRAH FARZEEN BINTI MUHAMMAD HASHIM", "JAYASREE A/P SARAVANAN", "KAMAL EYDENE AMEENA BINTI KAMAL ARIFIN", "LENISHA A/P MUKKESH", "MALAIQA HUMAIRA BINTI ZULKIFLI", "MIA ZAREEN QHADIJAH BINTI KHAIRUL BAHARI", "NOR FARISHA NAURA BINTI MUHAMAD NOR FAKHRI", "NUR AATHIFAH MAWIYAH BINTI MOHD AZAHAR", "NUR HIDAYATUL HUSNA BINTI MUHAMMAD FIRDAUS", "NUR IMANI HUMAIRAH BINTI SHAHROL NIZAM", "NUR KHAIRIN AAFIYAH BINTI MUHAMMAD KAMAL", "NUR KHAWLAH ZINNIRAH BINTI HAIRUL RIZUAN", "NUR NAINA AMIRA AMSYAR BINTI UMAR AMSYAR SURESH", "NUR QASEH ELSABELLA BINTI ROSDI", "NUR QASIH MIKAYLA BINTI MOHD EFFENDY", "NUR RAISHA IRDINA BINTI MOHD.RIZUWAN", "NUR ZAFREENAH BINTI AHMAD", "NUR ZARRA SOFEA BINTI MOHD SAIDY", "NURUL AAFIYAH BINTI MUHAMMAD AZMI", "PUTRI NUR AISYAH ZAHRA BINTI MUHAMMAD ZUFPI", "QASEH DELISHA BINTI SYAHRIZAN", "SHAANELLE NAVYAA RAJ", "SITI AISYAH HUMAIRA BINTI MOHD HAIRY", "THIYALINI A/P THIAGU", "ZARYN AEESYA BINTI AMIR AIZAT"]
-        // ... (data kelas lain akan auto-load jika anda guna fail asal anda)
+        "1 Camellia": ["AFIQAH BINTI HALIDZAN", "AL ZAHRA ROSE BINTI JEFRY", "AZZA ZINNIRAH BINTI MUHAMMAD ZARUL AZUANDI", "DHIA INARA BINTI MUHAMMAD ISHAM", "DHIA SOFEA AZZAHRA BINTI MOHD FAISAL", "DIAN SURFINA BINTI MOHD SAZALI", "HANAN INARA BINTI MOHD SHAHRIN", "HUZAIRAH FARZEEN BINTI MUHAMMAD HASHIM", "JAYASREE A/P SARAVANAN", "KAMAL EYDENE AMEENA BINTI KAMAL ARIFIN", "LENISHA A/P MUKKESH", "MALAIQA HUMAIRA BINTI ZULKIFLI", "MIA ZAREEN QHADIJAH BINTI KHAIRUL BAHARI", "NOR FARISHA NAURA BINTI MUHAMAD NOR FAKHRI", "NUR AATHIFAH MAWIYAH BINTI MOHD AZAHAR", "NUR HIDAYATUL HUSNA BINTI MUHAMMAD FIRDAUS", "NUR IMANI HUMAIRAH BINTI SHAHROL NIZAM", "NUR KHAIRIN AAFIYAH BINTI MUHAMMAD KAMAL", "NUR KHAWLAH ZINNIRAH BINTI HAIRUL RIZUAN", "NUR NAINA AMIRA AMSYAR BINTI UMAR AMSYAR SURESH", "NUR QASEH ELSABELLA BINTI ROSDI", "NUR QASIH MIKAYLA BINTI MOHD EFFENDY", "NUR RAISHA IRDINA BINTI MOHD.RIZUWAN", "NUR ZAFREENAH BINTI AHMAD", "NUR ZARRA SOFEA BINTI MOHD SAIDY", "NURUL AAFIYAH BINTI MUHAMMAD AZMI", "PUTRI NUR AISYAH ZAHRA BINTI MUHAMMAD ZUFPI", "QASEH DELISHA BINTI SYAHRIZAN", "SHAANELLE NAVYAA RAJ", "SITI AISYAH HUMAIRA BINTI MOHD HAIRY", "THIYALINI A/P THIAGU", "ZARYN AEESYA BINTI AMIR AIZAT"],
+        "2 Daffodils": ["AFYA NAYLA BINTI AZARIFF", "AINA QAIRINA BINTI NURQAMARUL ARIFIN", "AISYAH DAHLIA BINTI ALIF AMIRUL", "AS SHAFRINA BINTI MOHAMED SIDDIK", "DAHLIA FALISHA BINTI FAIZ IKHWAN", "DAHLIA IMANI BINTI NORHIZAD", "DAHLIA NADINE BINTI MOHD HATTA", "HANA SAFIYYAH BINTI AHMAD SAFWAN", "IRDINA NUR SYIFAA BINTI IZZUDDIN", "IZZ AIEYLA AD DHUHA BINTI MOHD IZHAM", "KEERTHISHA A/P M THANASEGAR", "NADHIFATUL SYAKIRA BINTI ZAWAWI", "NOR TRISYA ADREENA BINTI ABD KAHAR", "NUR AAIRA AFIQAH BINTI MOHD NOR AIN", "NUR AISY INARA BINTI MOHD AZMI", "NUR ATHIA BINTI MOHD SHARIZAL", "NUR ATHILA BINTI CLASS", "NUR HAZIQAH SOFEA", "NUR MALAIQA ARIANA", "NUR MARYAM QAISARA", "NUR SYIFA AQILAH", "NUR UFAIRA QAIRINA", "NUR WARDA IRDINA", "NURIN SAFIYA", "PIRUNTHASRI", "PRATIYANGIRA DEVI", "PUTERI AISYAH ZAARA", "PUTRY NUR INSYIRAH", "PUTRY NURAIRYSH", "QASEH NUR HUMAIRA", "RAISHA MIQAYLA", "RHEEYA LAXMI STEVEN", "RIMASHINI", "SUFI IRDINA", "TRISHIKA", "VENUSHKA RAJ", "YARSHANA", "ZAHRA BINTI ABBAS"],
+        "2 Camellia": ["ADRIANA AISHAH", "ALEESYA SAFIYYA", "AMANDA SOFIA", "ANUSHKA", "DHIA ARISSA", "GABRIELLA", "GEETHASREE ALVINA", "KAVINASHREE", "MUFIDAH ARIANA SYAFIAH", "NAVINA", "NAZNIN PARVEEN", "NAZURAH", "NUR AFIYYA JANNAH", "NUR AIFA SOFIA", "NUR ARIANA DELISHA", "NUR ASHEEQA QIRANI", "NUR AULIYA HANNAH", "NUR AYRA SOFIA", "NUR IMAN AISYAH", "NUR KHAYYIRA AURORA", "NUR NAURA AULIA", "NUR SHAHREFAH NORAZLEEN", "NUR YASMEEN HUMAIRA", "NURALISHA KHAIRA WILDA", "NURin AFRINA", "NUUR ALISHA QAISARA", "PUTERI NUR RAFIEKA NATRISYAH", "PUTRI ARIANA QAISARA", "TANUSHRIEE", "THANYASRI", "THIYASHINI", "WAN NURZEHRA SOPHIA", "YAALINIE SIVASANGARAN", "YASHARA DIVENDRAN", "YAYSHWITHA", "ZARA MEDINA"],
+        "3 Daffodils": ["ADRIANA RIZQ IMAN", "ALAYNA SUHARA", "AMANDA", "ARYSSA SUMAYYAH", "BALQIS SHAKIRA", "DELISHA UZMA", "DHIYA AN-NISAA", "EMBUN MARYAM", "EMINA AWATIF", "HANI AREESHA", "HANIS MARISSA", "MARSYA ANIS SOFEA", "NAURAH BAHEERAH", "NUR AFIFA ALYA", "NUR AFINA AULIYA", "NUR ALISHA AZ ZAHRA", "NUR ANGGUN HAFIESYA", "NUR ARISSA RANIA", "NUR ATIQAH", "NUR DEEBA MAYESA", "NUR IFFAT HAMANI", "NUR JANNAH", "NUR KHALISH IMANI", "NUR KHAYLA MEDINA", "NUR MIKAYLA AZZALEA", "NUR NAURAH AAISYAH", "NUR QURRA'AISYA QHARIERAH", "PUTERI SAFYA EL ZEHRAA", "PUTRI NAEERA ELVINA", "QISYA BATRISYA", "SABURAH RIFAH", "SHIVAANIE NAIDU", "SUHASINI", "WAN SHAHEERA"],
+        "3 Camellia": ["AAIRA QAISARA", "AFRINA DANIA", "AINA SHAFIYYA", "ALESHA ZAHRA", "ALTHEA KHAYLA", "ANGGUN KHADEEJA", "ANUSHAY DEVI", "AS SHIFANA", "ASHURA HUMAIRA", "DHARSHANAH", "FAITH ASHLEY TAN", "JIVIKA", "KRISSIA SRIKAA", "LENISYHAA", "MUVITRA", "NASYIFA AZ ZAHRA", "NUR ALEESYA NABIHA", "NUR AMINAH", "NUR ANDHARA HUDA", "NUR AWFIYAH MAWADDAH", "NUR AWLIYA SOLEHAH", "NUR AYRA MARISSA", "NUR HANIS NADEERA", "NUR RANIAH RAISHA", "NUR ZAHIYA EDINA", "NURRAISHA MIKAYLA", "PUTERI RAISHA MARISSA", "RINETRAA", "RIZQ ALEESHA ARIANA", "ROSHINI", "SARA AURORA", "SAYANTIKA", "SITI NUR QALESYA", "TAASHMETHA", "THARANE"],
+        "4 Daffodils": ["AAIRA NUR ISYAH", "AISYAH ZAHRA", "AUNI NUHA", "AYESSHA ENARA", "FRANCESCA DOFA", "HAANUUSHREJI", "HAVINA", "IRDINA RAISYAH", "MAHIRAH ZARIN IRDINA", "NILSHIKKHA", "NISA AILANI", "NOR TRISYA AMMARA", "NUR AMANI", "NUR IFTITAH SAFIYYAH", "NUR MEDINA", "NUR RAESHA ZAHIRA", "ORKED NUR IMANI", "PRETYY", "PUTRY NUR AISHAH", "QASEH MEDINA", "RAIHANAH", "RIZQ ZARA ARISSA", "SASHMIKA MOHAN", "SITI KHADIJAH", "SUFI INARA", "WAN NUR AIFA ELLYSYA", "WAN SHAKIRA", "YONISHAA", "ZARIN AMANDA"],
+        "4 Camellia": ["ADELIA QAISARAH", "AINUR ZARA AQEELA", "IZZ AIEYRA UQASHA", "KAUSALYA", "NIK IZZSARA XIANDRA", "NUR ADRA JAUZA", "NUR AINA ZHAFARINA", "NUR ALYA HANA", "NUR AQEELA NASHWA", "NUR AQILAH FALISHA", "NUR ARDINI ZAHIRAH", "NUR ARYANNA", "NUR FIRYAL NUZAEYRA", "NUR HAZIRAH NADIA", "NUR ILFA MEDINA", "NUR IZZARA NATASYAH", "NUR RANIA AZZAHRA", "NUR RANIA HUMAYRAA", "NUR SAFRINA", "NURin ARISSA", "PAYRESHA SAKTI", "PHUWANEYSHWARY", "QAISARA HUMAIRA", "SHAMIRAH NATASHAH", "SITI HAWA ZULEYKHA", "SITI NUR MAISARAH", "VYSHNAVI", "WAN NURKHAYSHA LUTHFIA", "ZIA ARISHA IRDEENA"],
+        "5 Daffodils": ["AFRAH NASUHA", "AISYAH QYRA", "ANEESA SHAKIRA", "AYRAA SOFEA", "HINDRAKSHI", "HUMAIRA KHADIJAH", "MAI ADWA INSYIRAH", "NEEHARIKHA", "NOORUL HUMAIRA", "NUR AISYAH MEDINA", "NUR ALESYA NUHAA", "NUR ARISSA SOFIA", "NUR AZMEERA ALEESHAH", "NUR EISYA ERINA", "NUR FAIQAH HUMAIRA", "NUR IRDINA SOLEHAH", "NUR NADIA ERYNA", "NUR QASRINA RASYIQAH", "NUR SYARAFANA ERYNA", "NURin AFINA", "NURUL ZAHIRAH", "PUTRI LUTHFIAH SYAUQINA", "QAISARA ISABELLA", "QASEH NURINSYIRAH", "QAYRA ZHAFEERA", "RANIA RAISHA", "RONA KESUMA", "SHERINA SMERA", "SINDUJA", "SYAZLIN NUR KHUZAIRA", "TANUSHA", "WISYAH AFIFA FITIYA", "YASHMIETRRA", "YUSRINA RIN NOHARA"],
+        "5 Camellia": ["ADELLIA NUR JASMINE", "ANGELINA", "ARLISSA NUR RAMADHANIA", "DHANUSRI", "DHIA QAISARA", "DINI NUHA ZAHRA", "ELLYDHIA", "HARSHINEE", "KEVINA THEVAMANE", "MEDINA IZZ WANI", "NAALINAH", "NAURAH NURJANNAH", "NOR IRDINA SYAKIRAH", "NUR ALYSSA ZAHIRA", "NUR AMANI DAMIA", "NUR AUNI BATRISYIA", "NUR DHIA QARISSA", "NUR HANA HUMAIRA", "NUR HANIFAH IMANI", "NUR JASMIN RANIA", "NUR QURRATU'AIN QHALIESYAH", "NUR RAMADHANIAH", "NUR SAFFIYA QAISARA", "NUR SYAZIA AZZAHRAH", "NURUL AQILAH", "PUTERI NOR DHIYA QAISARA", "PUTERI NUR SUMAYYAH", "PUTRI ARIQA INSYIRA", "PUTRI NUR ARIANA ZAFINA", "SHAALINI", "SITI NUR JANNAH", "SUDHISHKA", "TUAN NURQAIREEN AISYAH", "TUSHAARA", "UMI NUR SYAFIYAH"],
+        "6 Daffodils": ["AISHA FATIMA", "ALIYA ADRIANA", "ALYA NADHIRAH", "AYRA SAFIYYAH", "HAFIZAH", "HAIFAA FAIQAH", "HANNAH SAFIYYAH", "HASYA MAISARAH", "HAYAA YUMNA", "KAITLYNN LEYLA", "KAVEESHA", "MAI AZZALEYA HUSNA", "NETRASRI", "NOORUL AZRAH", "NUR AAFIA AZWA", "NUR AIN QALISHA", "NUR IZZATI", "NUR KHAIRINA ARISSA", "NUR QIESHA IRDINA", "NUR YASMIN MARISSA", "NUR ZARRA DARWISYA", "NURDINA INSYIRAH", "NURin ARIANA", "NURLAYLA RAISHA", "NURLISA IMANINA", "PUTERI NATASYA", "PUTERI SYAHRIFA SYAHWANA", "QASEH UMAYRA", "RATHAA", "SAADHANA SHREE", "SITI FARAHUSNA", "TANISKA", "THARSHAINEY", "UMMUL SUBUHATH", "WAN NURAINA HANNANI"],
+        "6 Camellia": ["ANUSREE", "DAKSHAYANI", "DAMIA QADYRA", "DESNA", "EAVANAYSA", "GAYATHRI DORAISINGAM", "INARAH QASRINA", "MASROTUL SUFEYA", "NOR ADELIA MARDHIYAH", "NOR RAFIDAH", "NUR ADRIANA SAFFIYA", "NUR AAIN MIM", "NUR AISY ARISSA", "NUR ALEESYA SOFEA", "NUR ALISYA AMANDA", "NUR AUNI MAISARAH", "NUR DAMIA QATRUNNADA", "NUR EISHAL HUMAIRA", "NUR JANNAH HUMAIRA", "NUR SYAFIRA", "NUR SYAKIRA ZULAIQHA", "NURNAILAHNAJWA", "NURUL DAMIA", "OVIYA", "PUTRI QISTINA BATRISYA", "PUTRI YASMEEN MAISARA", "QALISYA NUR' JANNAH", "QASEH RANIA", "RAYHANNA DAYANA", "SITI NUR SAFINA", "SUJEETHAJI", "VENOLINA JASON RAJ", "YOGALAXSHME"]
     };
 
-    // Logik Inisialisasi
     const selKelas = document.getElementById('selKelas');
     const selNama = document.getElementById('selNama');
     selKelas.innerHTML = '<option value="">Pilih Kelas</option>';
@@ -190,16 +174,22 @@
         }
     };
 
-    // Fungsi Simpan
     document.getElementById('btnSimpan').onclick = () => {
         const k = selKelas.value; const n = selNama.value;
         const a = document.getElementById('selAmaun').value;
         if(!k || !n) return alert("Pilih kelas & nama!");
         push(dbRef, { nama: n, kelas: k, amaun: parseInt(a), tarikh: new Date().toLocaleString() });
-        alert("Simpan!");
+        alert("Rekod disimpan!");
     };
 
-    // Papar Data & Chart
+    let isAdmin = false;
+    document.getElementById('btnAdmin').onclick = () => {
+        if(prompt("Password:") === "admin123") {
+            isAdmin = true;
+            document.querySelectorAll('.admin-only').forEach(e => e.style.display = 'table-cell');
+        }
+    };
+
     let myChart;
     onValue(dbRef, (snap) => {
         const data = snap.val() || {};
@@ -215,7 +205,7 @@
             if(item.amaun === 170) { tPIBG += 100; tExtra += 70; }
             else if(item.amaun === 100) { tPIBG += 100; }
             else { tExtra += 70; }
-            sudahBody.innerHTML += `<tr><td>${item.nama}</td><td>${item.kelas}</td><td><span class="badge bg-success">RM ${item.amaun}</span></td><td class="admin-only"><button class="btn btn-sm btn-danger" onclick="window.hapus('${id}')">X</button></td></tr>`;
+            sudahBody.innerHTML += `<tr><td>${item.nama}</td><td>${item.kelas}</td><td><span class="badge bg-success">RM ${item.amaun}</span></td><td class="admin-only" style="display:${isAdmin?'table-cell':'none'}"><button class="btn btn-sm btn-danger" onclick="window.hapus('${id}')"><i class="fas fa-trash"></i></button></td></tr>`;
         });
 
         let countB = 0;
@@ -241,6 +231,16 @@
     });
 
     window.hapus = (id) => { if(confirm("Hapus?")) remove(ref(db, `yuran_2026/${id}`)); };
+
+    document.getElementById('btnDownload').onclick = () => {
+        let csv = "\uFEFFNama,Kelas,Amaun,Tarikh\n";
+        onValue(dbRef, (s) => {
+            Object.values(s.val() || {}).forEach(r => { csv += `${r.nama},${r.kelas},${r.amaun},${r.tarikh}\n`; });
+        }, {onlyOnce: true});
+        const blob = new Blob([csv], {type: 'text/csv'});
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = 'Laporan_Yuran_2026.csv'; a.click();
+    };
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
