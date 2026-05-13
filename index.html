@@ -12,7 +12,7 @@
     <style>
         :root { 
             --primary: #d4af37; --secondary: #1a3a7a; --dark: #050c1d;
-            --glass: rgba(255, 255, 255, 0.05); --success: #2ecc71; --danger: #e74c3c; --warning: #f1c40f;
+            --glass: rgba(255, 255, 255, 0.05); --success: #2ecc71; --danger: #e74c3c;
         }
         body { 
             background: radial-gradient(circle at top right, #1e3a8a, var(--dark));
@@ -25,10 +25,9 @@
             padding: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.4); height: 100%;
         }
         .school-logo { width: 90px; height: auto; margin-bottom: 15px; }
-        .nav-tabs { border: none; gap: 10px; margin-bottom: 20px; }
         .nav-link { 
             color: #ccc; border: none !important; border-radius: 12px !important; 
-            background: rgba(255,255,255,0.05); padding: 10px 20px;
+            background: rgba(255,255,255,0.05); padding: 10px 20px; margin-right: 10px;
         }
         .nav-link.active { background: var(--primary) !important; color: #000 !important; font-weight: 800; }
         .stat-card { text-align: center; border-bottom: 4px solid var(--primary); }
@@ -37,11 +36,7 @@
             background: linear-gradient(135deg, #d4af37, #f7c948);
             border: none; color: #000; font-weight: 800; border-radius: 12px; padding: 12px;
         }
-        .table { color: #eee !important; border-color: rgba(255,255,255,0.1); vertical-align: middle; }
-        .badge-status { padding: 5px 10px; border-radius: 6px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
-        .bg-selesai { background: rgba(46, 204, 113, 0.2); color: #2ecc71; border: 1px solid #2ecc71; }
-        .bg-deposit { background: rgba(241, 196, 15, 0.2); color: #f1c40f; border: 1px solid #f1c40f; }
-        .bg-belum { background: rgba(231, 76, 60, 0.2); color: #e74c3c; border: 1px solid #e74c3c; }
+        .table { color: #eee !important; border-color: rgba(255,255,255,0.1); }
         .scroll-area { max-height: 450px; overflow-y: auto; }
         #btnAdminLogin { position: absolute; top: 20px; right: 20px; }
     </style>
@@ -57,34 +52,32 @@
     </div>
 
     <div class="row g-3 mb-4">
-        <div class="col-md-4 col-lg-2">
+        <div class="col-md-6 col-lg-3">
             <div class="glass-card stat-card">
-                <div class="small opacity-75">KUTIPAN (RM)</div>
+                <div class="small opacity-75">TOTAL KUTIPAN</div>
                 <div class="stat-val" id="totalSemasa">RM 0</div>
             </div>
         </div>
-        <div class="col-md-4 col-lg-2">
+        <div class="col-md-6 col-lg-3">
             <div class="glass-card stat-card" style="border-color: #3498db">
                 <div class="small opacity-75">PIBG</div>
                 <div class="stat-val text-info" id="totalPIBG">RM 0</div>
             </div>
         </div>
-        <div class="col-md-4 col-lg-2">
+        <div class="col-md-6 col-lg-3">
             <div class="glass-card stat-card" style="border-color: var(--success)">
-                <div class="small opacity-75">TAMBAHAN</div>
+                <div class="small opacity-75">KELAS TAMBAHAN</div>
                 <div class="stat-val text-success" id="totalExtra">RM 0</div>
             </div>
         </div>
         <div class="col-md-6 col-lg-3">
-            <div class="glass-card stat-card" style="border-color: #2ecc71">
-                <div class="small opacity-75">MURID SELESAI</div>
-                <div class="stat-val text-success" id="countSelesai">0</div>
-            </div>
-        </div>
-        <div class="col-md-6 col-lg-3">
-            <div class="glass-card stat-card" style="border-color: #e74c3c">
-                <div class="small opacity-75">MURID BELUM</div>
-                <div class="stat-val text-danger" id="countBelumStat">0</div>
+            <div class="glass-card stat-card" style="border-color: #9b59b6">
+                <div class="small opacity-75">BIL. SELESAI / BELUM</div>
+                <div class="stat-val d-flex justify-content-center gap-2">
+                    <span id="countSelesai" class="text-success">0</span>
+                    <span class="opacity-25">/</span>
+                    <span id="countBelumStat" class="text-danger">0</span>
+                </div>
             </div>
         </div>
     </div>
@@ -110,26 +103,26 @@
                     </select>
                 </div>
                 <button class="btn btn-gold w-100 mb-3" id="btnSimpan">SIMPAN REKOD</button>
-                <button class="btn btn-outline-light w-100" id="btnDownload"><i class="fas fa-download me-2"></i>MUAT TURUN CSV</button>
-            </div>
-            
-            <div class="glass-card mt-4">
-                <canvas id="pieChart" style="max-height: 200px;"></canvas>
+                <button class="btn btn-outline-light w-100" id="btnDownload"><i class="fas fa-download me-2"></i>CSV</button>
+                
+                <div class="mt-4 pt-4 border-top border-secondary">
+                    <canvas id="pieChart" style="max-height: 150px;"></canvas>
+                </div>
             </div>
         </div>
 
         <div class="col-lg-8">
             <div class="glass-card">
-                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <ul class="nav nav-pills mb-4" id="myTab">
                     <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab1">REKOD BAYARAN</button></li>
-                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab2">BELUM SELESAI</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab2">SENARAI BELUM BAYAR</button></li>
                 </ul>
                 
                 <div class="tab-content">
                     <div class="tab-pane fade show active" id="tab1">
                         <div class="scroll-area">
                             <table class="table table-hover">
-                                <thead><tr><th>Nama</th><th>Kelas</th><th>Amaun</th><th>Status</th><th class="admin-col d-none">#</th></tr></thead>
+                                <thead><tr><th>Nama Murid</th><th>Kelas</th><th>Amaun</th><th class="admin-col d-none">#</th></tr></thead>
                                 <tbody id="listSudah"></tbody>
                             </table>
                         </div>
@@ -137,7 +130,7 @@
                     <div class="tab-pane fade" id="tab2">
                         <div class="scroll-area">
                             <table class="table table-hover">
-                                <thead><tr><th>Nama Murid</th><th>Kelas</th><th>Status</th></tr></thead>
+                                <thead><tr><th>Nama Murid</th><th>Kelas</th><th class="text-danger">Status</th></tr></thead>
                                 <tbody id="listBelum"></tbody>
                             </table>
                         </div>
@@ -226,7 +219,7 @@
         const n = document.getElementById('selNama').value;
         const k = document.getElementById('selKelas').value;
         const a = document.getElementById('selAmaun').value;
-        if(!n || !k) return alert("Pilih Murid!");
+        if(!n || !k) return alert("Sila pilih kelas dan nama murid!");
         push(dbRef, { nama: n, kelas: k, amaun: parseInt(a), tarikh: new Date().toLocaleString('ms-MY') });
     };
 
@@ -247,13 +240,10 @@
             else if(item.amaun === 100) { tPIBG += 100; }
             else if(item.amaun === 70) { tExtra += 70; }
 
-            let badge = item.amaun >= 170 ? '<span class="badge-status bg-selesai">Lunas</span>' : '<span class="badge-status bg-deposit">Deposit</span>';
-
             listSudah.innerHTML += `<tr>
                 <td><div class="fw-bold">${item.nama}</div></td>
                 <td>${item.kelas}</td>
                 <td class="text-end fw-bold">RM ${item.amaun}</td>
-                <td>${badge}</td>
                 <td class="admin-col ${isAdmin?'':'d-none'}">
                     <button class="btn btn-sm text-danger" onclick="window.padam('${id}')"><i class="fas fa-trash"></i></button>
                 </td>
@@ -265,12 +255,11 @@
             rawData[kls].forEach(murid => {
                 if(!sudahBayarFull.has(murid)) {
                     countB++;
-                    listBelum.innerHTML += `<tr><td>${murid}</td><td>${kls}</td><td><span class="badge-status bg-belum">Belum</span></td></tr>`;
+                    listBelum.innerHTML += `<tr><td>${murid}</td><td>${kls}</td><td class="text-danger small fw-800">BELUM</td></tr>`;
                 }
             });
         });
 
-        // Paparkan ke Statistik Ringkasan
         document.getElementById('totalSemasa').innerText = "RM " + tKeseluruhan;
         document.getElementById('totalPIBG').innerText = "RM " + tPIBG;
         document.getElementById('totalExtra').innerText = "RM " + tExtra;
@@ -280,7 +269,7 @@
         initChart(sudahBayarFull.size, countB);
     });
 
-    window.padam = (id) => { if(confirm("Padam?")) remove(ref(db, `yuran_2026/${id}`)); };
+    window.padam = (id) => { if(confirm("Padam rekod?")) remove(ref(db, `yuran_2026/${id}`)); };
 
     document.getElementById('btnDownload').onclick = function() {
         let csv = "\uFEFFTarikh,Nama,Kelas,Amaun\n";
@@ -289,7 +278,7 @@
         }, {onlyOnce: true});
         const blob = new Blob([csv], { type: 'text/csv' });
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.download = 'Laporan.csv'; a.click();
+        const a = document.createElement('a'); a.href = url; a.download = 'Laporan_Yuran.csv'; a.click();
     };
 </script>
 
