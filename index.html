@@ -4,77 +4,76 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>St. Anne's Fee System 2026</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         :root { 
-            --gold: #d4af37; --gold-dark: #aa8c2c; --dark-bg: #020617;
-            --card-bg: rgba(15, 23, 42, 0.6); --border: rgba(255, 255, 255, 0.08);
+            --primary: #1e3a8a; --gold: #d4af37; --light-bg: #f8fafc;
+            --card-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
         
         body { 
-            background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
-            background-attachment: fixed; color: #f8fafc; 
-            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+            color: #334155; font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
         }
 
-        /* Tajuk Eksklusif */
         h1 { 
-            font-family: 'Playfair Display', serif; 
-            font-size: 3rem; letter-spacing: 1px;
-            text-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            font-family: 'Montserrat', sans-serif; font-weight: 900;
+            color: var(--primary); letter-spacing: -1px;
         }
 
-        .header-section { padding: 60px 0 40px 0; }
+        .header-section { padding: 50px 0; background: white; margin-bottom: 40px; box-shadow: var(--card-shadow); border-bottom: 4px solid var(--gold); }
+        
+        .school-logo { width: 100px; margin-bottom: 15px; }
 
-        .glass-card {
-            background: var(--card-bg); backdrop-filter: blur(25px);
-            border: 1px solid var(--border); border-radius: 30px;
-            padding: 25px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        .stat-card {
+            background: white; border: none; border-radius: 20px;
+            padding: 20px; box-shadow: var(--card-shadow);
+            border-left: 5px solid var(--primary); transition: 0.3s;
+        }
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-label { font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; }
+        .stat-val { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+
+        .main-card {
+            background: white; border: none; border-radius: 25px;
+            padding: 30px; box-shadow: var(--card-shadow); height: 100%;
         }
 
-        .glass-card:hover { transform: translateY(-8px); border-color: var(--gold); }
+        .form-label { font-weight: 700; font-size: 0.85rem; color: var(--primary); }
+        .form-select { border-radius: 12px; border: 2px solid #e2e8f0; padding: 12px; font-weight: 600; }
+        .form-select:focus { border-color: var(--gold); box-shadow: none; }
 
-        .stat-card { text-align: center; border-bottom: 3px solid var(--gold); }
-        .stat-val { font-size: 1.8rem; font-weight: 800; color: var(--gold); }
-
-        .school-logo { 
-            width: 110px; filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.4));
-            margin-bottom: 25px;
+        .btn-primary-custom {
+            background: var(--primary); border: none; color: white;
+            font-weight: 800; border-radius: 12px; padding: 15px;
+            transition: 0.3s; width: 100%;
         }
+        .btn-primary-custom:hover { background: #152c6d; transform: scale(1.02); }
 
-        /* Legend Style */
-        .legend-item { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.85rem; }
-        .dot { width: 12px; height: 12px; border-radius: 50%; }
-
-        .form-select, .form-control {
-            background: rgba(0,0,0,0.3) !important; border: 1px solid var(--border) !important;
-            color: white !important; border-radius: 15px; padding: 12px;
+        /* Table Styling */
+        .table thead th { 
+            background: #f1f5f9; color: var(--primary); 
+            font-weight: 800; border: none; padding: 15px; font-size: 0.8rem;
         }
+        .table tbody td { padding: 15px; vertical-align: middle; border-bottom: 1px solid #f1f5f9; }
 
-        .btn-gold {
-            background: linear-gradient(135deg, #d4af37, #f7c948);
-            border: none; color: #000; font-weight: 800; border-radius: 15px;
-            padding: 15px; transition: 0.3s;
-        }
-        .btn-gold:hover { transform: scale(1.03); box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4); }
+        .badge-status { padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 0.7rem; }
+        .bg-selesai { background: #dcfce7; color: #15803d; }
+        .bg-belum { background: #fee2e2; color: #b91c1c; }
 
         .nav-pills .nav-link { 
-            color: #94a3b8; font-weight: 700; border-radius: 15px; 
-            background: rgba(255,255,255,0.03); margin-right: 10px;
+            color: #64748b; font-weight: 800; border-radius: 10px; margin-right: 10px;
         }
-        .nav-pills .nav-link.active { background: var(--gold) !important; color: #000 !important; }
+        .nav-pills .nav-link.active { background: var(--primary) !important; color: white !important; }
 
-        .badge-status { padding: 8px 16px; border-radius: 12px; font-weight: 800; font-size: 0.75rem; }
-        .bg-selesai { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid #22c55e; }
-        .bg-belum { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid #ef4444; }
-
-        .scroll-area { max-height: 480px; overflow-y: auto; }
-        #btnAdminLogin { position: fixed; bottom: 30px; right: 30px; border-radius: 50%; width: 50px; height: 50px; }
+        .legend-dot { width: 12px; height: 12px; border-radius: 4px; display: inline-block; margin-right: 5px; }
+        
+        #btnAdminLogin { position: fixed; bottom: 20px; right: 20px; border-radius: 50%; width: 50px; height: 50px; background: white; border: 2px solid #e2e8f0; color: #64748b; }
     </style>
 </head>
 <body>
@@ -82,109 +81,107 @@
 <div class="header-section text-center">
     <div class="container">
         <img src="images.jpeg" alt="Logo" class="school-logo">
-        <h1 class="fw-900">ST. ANNE'S <span style="color: var(--gold);">FEE SYSTEM</span></h1>
-        <div class="mx-auto" style="width: 100px; height: 4px; background: var(--gold); border-radius: 2px;"></div>
+        <h1>ST. ANNE'S <span style="color: var(--gold);">FEE SYSTEM</span></h1>
     </div>
 </div>
 
 <div class="container pb-5">
-    <div class="row g-4 mb-5">
+    <div class="row g-4 mb-4">
         <div class="col-6 col-lg-3">
-            <div class="glass-card stat-card">
-                <div class="small opacity-50 fw-600">JUMLAH KUTIPAN</div>
+            <div class="stat-card">
+                <div class="stat-label">Jumlah Kutipan</div>
                 <div class="stat-val" id="totalSemasa">RM 0</div>
             </div>
         </div>
         <div class="col-6 col-lg-3">
-            <div class="glass-card stat-card">
-                <div class="small opacity-50 fw-600">TABUNG PIBG</div>
-                <div class="stat-val text-info" id="totalPIBG">RM 0</div>
+            <div class="stat-card" style="border-left-color: var(--gold);">
+                <div class="stat-label">Tabung PIBG</div>
+                <div class="stat-val" id="totalPIBG">RM 0</div>
             </div>
         </div>
         <div class="col-6 col-lg-3">
-            <div class="glass-card stat-card">
-                <div class="small opacity-50 fw-600">KELAS TAMBAHAN</div>
-                <div class="stat-val text-success" id="totalExtra">RM 0</div>
+            <div class="stat-card" style="border-left-color: #10b981;">
+                <div class="stat-label">Kelas Tambahan</div>
+                <div class="stat-val" id="totalExtra">RM 0</div>
             </div>
         </div>
         <div class="col-6 col-lg-3">
-            <div class="glass-card stat-card">
-                <div class="small opacity-50 fw-600">SELESAI / BELUM</div>
-                <div class="stat-val">
-                    <span id="countSelesai" style="color: #4ade80">0</span>
-                    <span class="opacity-20 mx-1">/</span>
-                    <span id="countBelumStat" style="color: #f87171">0</span>
-                </div>
+            <div class="stat-card" style="border-left-color: #6366f1;">
+                <div class="stat-label">Bilangan Selesai</div>
+                <div class="stat-val" id="countSelesai">0</div>
             </div>
         </div>
     </div>
 
     <div class="row g-4">
         <div class="col-lg-4">
-            <div class="glass-card mb-4">
-                <h5 class="mb-4 fw-800 text-gold text-uppercase small" style="letter-spacing: 2px;">Kemasukan Data</h5>
+            <div class="main-card mb-4">
+                <h5 class="fw-800 mb-4" style="color: var(--primary);">KEMASUKAN REKOD</h5>
                 <div class="mb-3">
-                    <label class="small opacity-50 mb-2">PILIH KELAS</label>
+                    <label class="form-label">TAHAP / KELAS</label>
                     <select id="selKelas" class="form-select"></select>
                 </div>
                 <div class="mb-3">
-                    <label class="small opacity-50 mb-2">NAMA MURID</label>
+                    <label class="form-label">NAMA MURID</label>
                     <select id="selNama" class="form-select"></select>
                 </div>
                 <div class="mb-4">
-                    <label class="small opacity-50 mb-2">KATEGORI BAYARAN</label>
+                    <label class="form-label">JENIS BAYARAN</label>
                     <select id="selAmaun" class="form-select">
                         <option value="170">KOMBO PENUH (RM 170)</option>
                         <option value="100">PIBG SAHAJA (RM 100)</option>
                         <option value="70">TAMBAHAN SAHAJA (RM 70)</option>
                     </select>
                 </div>
-                <button class="btn btn-gold w-100" id="btnSimpan">SIMPAN REKOD</button>
+                <button class="btn btn-primary-custom" id="btnSimpan">SIMPAN REKOD</button>
             </div>
 
-            <div class="glass-card">
-                <h5 class="text-center small opacity-50 fw-800 mb-4">STATUS KESELURUHAN</h5>
-                <div class="d-flex justify-content-center mb-4">
-                    <canvas id="pieChart" style="max-height: 180px;"></canvas>
-                </div>
-                <div class="d-flex justify-content-center gap-4 border-top border-secondary pt-3">
-                    <div class="legend-item">
-                        <div class="dot" style="background: #22c55e;"></div>
-                        <span>Selesai</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="dot" style="background: #ef4444;"></div>
-                        <span>Belum</span>
-                    </div>
+            <div class="main-card">
+                <h6 class="text-center fw-800 mb-3">ANALISIS STATUS</h6>
+                <canvas id="pieChart" style="max-height: 180px;"></canvas>
+                <div class="d-flex justify-content-center mt-3 gap-3">
+                    <div class="small fw-600"><span class="legend-dot" style="background: #22c55e;"></span>Selesai</div>
+                    <div class="small fw-600"><span class="legend-dot" style="background: #ef4444;"></span>Belum</div>
                 </div>
             </div>
         </div>
 
         <div class="col-lg-8">
-            <div class="glass-card h-100">
-                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <div class="main-card">
+                <div class="d-flex justify-content-between align-items-center mb-4">
                     <ul class="nav nav-pills" id="myTab">
                         <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab1">REKOD BAYARAN</button></li>
-                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab2">TIADA REKOD</button></li>
+                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab2">BELUM BAYAR</button></li>
                     </ul>
-                    <button class="btn btn-sm btn-outline-light opacity-50 border-0" id="btnDownload">
-                        <i class="fas fa-file-csv me-1"></i>MUAT TURUN CSV
-                    </button>
+                    <button class="btn btn-outline-secondary btn-sm fw-700" id="btnDownload">EXPORT CSV</button>
                 </div>
                 
                 <div class="tab-content">
                     <div class="tab-pane fade show active" id="tab1">
-                        <div class="scroll-area">
+                        <div class="table-responsive" style="max-height: 500px;">
                             <table class="table">
-                                <thead><tr><th>MURID</th><th>STATUS</th><th class="admin-col d-none"></th></tr></thead>
+                                <thead>
+                                    <tr>
+                                        <th>NAMA MURID</th>
+                                        <th>KELAS</th>
+                                        <th>AMAUN</th>
+                                        <th class="admin-col d-none">TINDAKAN</th>
+                                    </tr>
+                                </thead>
                                 <tbody id="listSudah"></tbody>
                             </table>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="tab2">
-                        <div class="scroll-area">
+                        <div class="table-responsive" style="max-height: 500px;">
                             <table class="table">
-                                <thead><tr><th>NAMA MURID</th><th>KELAS</th><th class="text-end">STATUS</th></tr></thead>
+                                <thead>
+                                    <tr>
+                                        <th>NAMA MURID</th>
+                                        <th>KELAS</th>
+                                        <th class="text-end">STATUS</th>
+                                    </tr>
+                                </thead>
                                 <tbody id="listBelum"></tbody>
                             </table>
                         </div>
@@ -195,7 +192,7 @@
     </div>
 </div>
 
-<button class="btn btn-dark shadow-lg" id="btnAdminLogin"><i class="fas fa-lock"></i></button>
+<button id="btnAdminLogin"><i class="fas fa-lock"></i></button>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -243,11 +240,10 @@
                 datasets: [{
                     data: [sudah, belum],
                     backgroundColor: ['#22c55e', '#ef4444'],
-                    hoverOffset: 15,
                     borderWidth: 0
                 }]
             },
-            options: { cutout: '75%', plugins: { legend: { display: false } } }
+            options: { cutout: '80%', plugins: { legend: { display: false } } }
         });
     }
 
@@ -267,7 +263,7 @@
         if(!isAdmin) {
             if(prompt("Sila masukkan kata laluan admin:") === adminPass) {
                 isAdmin = true;
-                this.classList.replace('btn-dark', 'btn-danger');
+                this.style.color = 'red';
                 document.querySelectorAll('.admin-col').forEach(el => el.classList.remove('d-none'));
             }
         } else { location.reload(); }
@@ -277,9 +273,9 @@
         const n = document.getElementById('selNama').value;
         const k = document.getElementById('selKelas').value;
         const a = document.getElementById('selAmaun').value;
-        if(!n || !k) return alert("Sila lengkapkan pilihan murid!");
+        if(!n || !k) return alert("Sila pilih nama & kelas!");
         push(dbRef, { nama: n, kelas: k, amaun: parseInt(a), tarikh: new Date().toLocaleString('ms-MY') });
-        alert("Rekod berjaya disimpan!");
+        alert("Rekod disimpan!");
     };
 
     onValue(dbRef, (snap) => {
@@ -295,58 +291,4 @@
         entries.forEach(([id, item]) => {
             tKeseluruhan += item.amaun;
             setSelesai.add(item.nama);
-            if(item.amaun === 170) { tPIBG += 100; tExtra += 70; }
-            else if(item.amaun === 100) { tPIBG += 100; }
-            else if(item.amaun === 70) { tExtra += 70; }
-
-            listSudah.innerHTML += `<tr>
-                <td>
-                    <div class="fw-800 text-white small">${item.nama}</div>
-                    <div class="opacity-40" style="font-size: 0.7rem;">${item.kelas} | ${item.tarikh}</div>
-                </td>
-                <td class="text-end"><span class="badge badge-status bg-selesai">RM ${item.amaun}</span></td>
-                <td class="admin-col text-end ${isAdmin?'':'d-none'}">
-                    <button class="btn btn-sm text-danger" onclick="window.padam('${id}')"><i class="fas fa-trash-alt"></i></button>
-                </td>
-            </tr>`;
-        });
-
-        let countB = 0;
-        Object.keys(rawData).forEach(kls => {
-            rawData[kls].forEach(murid => {
-                if(!setSelesai.has(murid)) {
-                    countB++;
-                    listBelum.innerHTML += `<tr>
-                        <td class="fw-600 small">${murid}</td>
-                        <td class="small opacity-50">${kls}</td>
-                        <td class="text-end"><span class="badge badge-status bg-belum">BELUM</span></td>
-                    </tr>`;
-                }
-            });
-        });
-
-        document.getElementById('totalSemasa').innerText = "RM " + tKeseluruhan;
-        document.getElementById('totalPIBG').innerText = "RM " + tPIBG;
-        document.getElementById('totalExtra').innerText = "RM " + tExtra;
-        document.getElementById('countSelesai').innerText = setSelesai.size;
-        document.getElementById('countBelumStat').innerText = countB;
-        
-        initChart(setSelesai.size, countB);
-    });
-
-    window.padam = (id) => { if(confirm("Padam rekod ini?")) remove(ref(db, `yuran_2026/${id}`)); };
-
-    document.getElementById('btnDownload').onclick = function() {
-        let csv = "\uFEFFTarikh,Nama,Kelas,Amaun\n";
-        onValue(dbRef, (s) => {
-            Object.values(s.val()||{}).forEach(r => csv += `"${r.tarikh}","${r.nama}","${r.kelas}","${r.amaun}"\n`);
-        }, {onlyOnce: true});
-        const blob = new Blob([csv], { type: 'text/csv' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.download = 'Laporan_Yuran_2026.csv'; a.click();
-    };
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+            if(item.amaun ===
