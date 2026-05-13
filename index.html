@@ -3,246 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>St. Anne's Fee System 2026</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <title>Sistem Yuran St. Anne's 2026</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
-        :root { 
-            --primary: #1e3a8a; 
-            --gold: #d4af37; 
-            --light-bg: #ffffff;
-            --section-bg: #f8fafc;
-        }
+        body { background-color: #f4f7f6; color: #333; }
+        .header { background-color: #1a237e; color: white; padding: 30px 0; text-align: center; border-bottom: 5px solid #ffd700; }
+        .school-logo { width: 100px; height: auto; margin-bottom: 10px; }
         
-        body { 
-            background-color: var(--section-bg);
-            color: #334155; 
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            margin: 0;
-        }
+        .card { border: none; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .card-header { background-color: #1a237e; color: white; border-radius: 15px 15px 0 0 !important; font-weight: bold; }
+        
+        .stat-card { text-align: center; padding: 20px; }
+        .stat-card h3 { color: #1a237e; font-weight: bold; }
+        
+        .btn-primary { background-color: #1a237e; border: none; }
+        .btn-primary:hover { background-color: #0d1442; }
+        
+        .table thead { background-color: #eeeeee; }
+        .badge-success { background-color: #28a745; }
+        .badge-danger { background-color: #dc3545; }
 
-        /* Header Area */
-        .header-section { 
-            background: white; 
-            padding: 40px 0; 
-            text-align: center; 
-            border-bottom: 5px solid var(--gold);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-
-        h1 { 
-            font-family: 'Montserrat', sans-serif; 
-            font-weight: 900;
-            color: var(--primary);
-            font-size: 2.5rem;
-            margin-top: 15px;
-        }
-
-        .school-logo { 
-            width: 120px; 
-            height: auto;
-            /* Memastikan logo nampak bersih */
-            mix-blend-mode: multiply; 
-        }
-
-        /* Stats Cards */
-        .stat-card {
-            background: white; 
-            border: 1px solid #e2e8f0; 
-            border-radius: 20px;
-            padding: 20px; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.02);
-            border-top: 4px solid var(--primary);
-            transition: 0.3s;
-        }
-        .stat-card:hover { transform: translateY(-5px); }
-        .stat-label { font-size: 0.7rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
-        .stat-val { font-size: 1.6rem; font-weight: 800; color: var(--primary); }
-
-        /* Main Content Cards */
-        .main-card {
-            background: white; 
-            border-radius: 25px;
-            padding: 25px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
-            border: 1px solid #f1f5f9;
-            height: 100%;
-        }
-
-        .card-title {
-            font-weight: 800;
-            color: var(--primary);
-            font-size: 1rem;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* Form Controls */
-        .form-label { font-weight: 700; font-size: 0.8rem; color: #475569; }
-        .form-select { 
-            border-radius: 12px; 
-            border: 2px solid #f1f5f9; 
-            padding: 12px; 
-            font-weight: 600;
-            background-color: #f8fafc;
-        }
-        .form-select:focus { border-color: var(--gold); box-shadow: none; background-color: white; }
-
-        .btn-save {
-            background: var(--primary); 
-            border: none; 
-            color: white;
-            font-weight: 800; 
-            border-radius: 12px; 
-            padding: 15px;
-            transition: 0.3s; 
-            width: 100%;
-            margin-top: 10px;
-        }
-        .btn-save:hover { background: #0f172a; transform: translateY(-2px); }
-
-        /* Table Styling */
-        .table thead th { 
-            background: #f8fafc; 
-            color: var(--primary); 
-            font-weight: 800; 
-            border: none; 
-            padding: 15px; 
-            font-size: 0.75rem;
-            text-transform: uppercase;
-        }
-        .table tbody td { padding: 15px; vertical-align: middle; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
-
-        .badge-amt { background: #dcfce7; color: #15803d; font-weight: 800; padding: 6px 12px; border-radius: 8px; }
-        .badge-pending { background: #fee2e2; color: #b91c1c; font-weight: 800; padding: 6px 12px; border-radius: 8px; }
-
-        .nav-pills .nav-link { 
-            color: #64748b; font-weight: 800; border-radius: 10px; font-size: 0.85rem;
-        }
-        .nav-pills .nav-link.active { background: var(--primary) !important; color: white !important; }
-
-        /* Legend for Pie Chart */
-        .legend-box { display: flex; align-items: center; gap: 5px; font-size: 0.8rem; font-weight: 700; }
-        .dot { width: 10px; height: 10px; border-radius: 30%; }
-
-        #btnAdmin { position: fixed; bottom: 20px; right: 20px; border-radius: 50%; width: 45px; height: 45px; background: white; border: 1px solid #e2e8f0; color: #cbd5e1; }
+        /* Style untuk admin */
+        #btnAdmin { position: fixed; bottom: 20px; right: 20px; opacity: 0.3; }
+        .admin-only { display: none; }
     </style>
 </head>
 <body>
 
-<div class="header-section">
+<div class="header">
     <div class="container">
-        <img src="images.jpeg" alt="Lencana Sekolah" class="school-logo">
-        <h1>ST. ANNE'S <span style="color: var(--gold);">FEE SYSTEM</span></h1>
+        <img src="images.jpeg" alt="Logo" class="school-logo">
+        <h2 class="fw-bold">SISTEM PENGURUSAN YURAN 2026</h2>
+        <p>ST. ANNE'S CONVENT</p>
     </div>
 </div>
 
-<div class="container py-5">
-    <div class="row g-4 mb-5 text-center">
-        <div class="col-6 col-lg-3">
-            <div class="stat-card">
-                <div class="stat-label">Total Kutipan</div>
-                <div class="stat-val" id="totalSemasa">RM 0</div>
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card stat-card">
+                <h6>JUMLAH KUTIPAN</h6>
+                <h3 id="totalSemasa">RM 0</h3>
             </div>
         </div>
-        <div class="col-6 col-lg-3">
-            <div class="stat-card" style="border-top-color: var(--gold);">
-                <div class="stat-label">Tabung PIBG</div>
-                <div class="stat-val" id="totalPIBG">RM 0</div>
+        <div class="col-md-3">
+            <div class="card stat-card">
+                <h6>TABUNG PIBG</h6>
+                <h3 id="totalPIBG">RM 0</h3>
             </div>
         </div>
-        <div class="col-6 col-lg-3">
-            <div class="stat-card" style="border-top-color: #10b981;">
-                <div class="stat-label">Kelas Tambahan</div>
-                <div class="stat-val" id="totalExtra">RM 0</div>
+        <div class="col-md-3">
+            <div class="card stat-card">
+                <h6>KELAS TAMBAHAN</h6>
+                <h3 id="totalExtra">RM 0</h3>
             </div>
         </div>
-        <div class="col-6 col-lg-3">
-            <div class="stat-card" style="border-top-color: #ef4444;">
-                <div class="stat-label">Bil. Selesai</div>
-                <div class="stat-val" id="countSelesai">0</div>
+        <div class="col-md-3">
+            <div class="card stat-card">
+                <h6>MURID SELESAI</h6>
+                <h3 id="countSelesai">0</h3>
             </div>
         </div>
     </div>
 
-    <div class="row g-4">
+    <div class="row">
         <div class="col-lg-4">
-            <div class="main-card mb-4">
-                <div class="card-title"><i class="fas fa-edit"></i> REKOD BARU</div>
-                <div class="mb-3">
-                    <label class="form-label">PILIH KELAS</label>
-                    <select id="selKelas" class="form-select"></select>
+            <div class="card">
+                <div class="card-header">KEMASUKAN DATA</div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Kelas</label>
+                        <select id="selKelas" class="form-select"></select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nama Murid</label>
+                        <select id="selNama" class="form-select"></select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Jenis Bayaran</label>
+                        <select id="selAmaun" class="form-select">
+                            <option value="170">KOMBO PENUH (RM 170)</option>
+                            <option value="100">PIBG SAHAJA (RM 100)</option>
+                            <option value="70">TAMBAHAN SAHAJA (RM 70)</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary w-100" id="btnSimpan">SIMPAN REKOD</button>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">NAMA MURID</label>
-                    <select id="selNama" class="form-select"></select>
-                </div>
-                <div class="mb-4">
-                    <label class="form-label">JENIS BAYARAN</label>
-                    <select id="selAmaun" class="form-select">
-                        <option value="170">KOMBO PENUH (RM 170)</option>
-                        <option value="100">PIBG SAHAJA (RM 100)</option>
-                        <option value="70">TAMBAHAN SAHAJA (RM 70)</option>
-                    </select>
-                </div>
-                <button class="btn btn-save" id="btnSimpan">SIMPAN REKOD</button>
             </div>
 
-            <div class="main-card">
-                <div class="card-title"><i class="fas fa-chart-pie"></i> STATUS ANALISIS</div>
-                <div class="py-2">
-                    <canvas id="pieChart" style="max-height: 180px;"></canvas>
-                </div>
-                <div class="d-flex justify-content-center gap-4 mt-3">
-                    <div class="legend-box"><div class="dot" style="background: #22c55e;"></div> Selesai</div>
-                    <div class="legend-box"><div class="dot" style="background: #ef4444;"></div> Belum</div>
+            <div class="card">
+                <div class="card-body">
+                    <canvas id="pieChart"></canvas>
                 </div>
             </div>
         </div>
 
         <div class="col-lg-8">
-            <div class="main-card">
-                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-                    <ul class="nav nav-pills" id="myTab">
-                        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab1">REKOD BAYARAN</button></li>
-                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab2">SENARAI BELUM</button></li>
-                    </ul>
-                    <button class="btn btn-sm btn-outline-dark fw-bold px-3" id="btnDownload"><i class="fas fa-file-export me-2"></i>CSV</button>
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>REKOD BAYARAN</span>
+                    <button class="btn btn-sm btn-light" id="btnDownload">Export CSV</button>
                 </div>
-                
-                <div class="tab-content">
-                    <div class="tab-pane fade show active" id="tab1">
-                        <div class="table-responsive" style="max-height: 550px;">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>NAMA MURID</th>
-                                        <th>KELAS</th>
-                                        <th>AMAUN</th>
-                                        <th class="admin-col d-none">#</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="listSudah"></tbody>
-                            </table>
+                <div class="card-body">
+                    <ul class="nav nav-tabs mb-3" id="tabYuran">
+                        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#sudah">Sudah Bayar</button></li>
+                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#belum">Belum Bayar</button></li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="sudah">
+                            <div class="table-responsive" style="max-height: 400px;">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Nama Murid</th>
+                                            <th>Kelas</th>
+                                            <th>Amaun</th>
+                                            <th class="admin-only">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="listSudah"></tbody>
+                                </table>
+                            </div>
                         </div>
-                    </div>
-                    <div class="tab-pane fade" id="tab2">
-                        <div class="table-responsive" style="max-height: 550px;">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>NAMA MURID</th>
-                                        <th>KELAS</th>
-                                        <th class="text-end">STATUS</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="listBelum"></tbody>
-                            </table>
+                        <div class="tab-pane fade" id="belum">
+                            <div class="table-responsive" style="max-height: 400px;">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Nama Murid</th>
+                                            <th>Kelas</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="listBelum"></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -251,7 +150,7 @@
     </div>
 </div>
 
-<button id="btnAdmin"><i class="fas fa-lock"></i></button>
+<button id="btnAdmin" class="btn btn-sm"><i class="fas fa-lock"></i></button>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -271,7 +170,7 @@
     const db = getDatabase(app);
     const dbRef = ref(db, 'yuran_2026');
 
-    let isAdmin = false;
+    // Data Murid (Raw Data)
     const rawData = {
         "1 Daffodils": ["AAIRA SOPHEA BINTI HAZMEER", "AILEEN SURAIYA BINTI MUHAMMAD NURSYAHMI", "AYRA NADHIRAH BINTI ABDUL RAZAK", "DEANDRA ADELYA BINTI MOHD KAMARUL SHAHID", "DIVYA A/P KUMARAN", "FATHIMA SHAZNA BINTI MANSOOR KHAN", "IZA IZZARA BINTI IZAT IZZUDIN", "KAAVYASREE A/P SASIDARAN", "KHAYLA AFEEYA BINTI RAZMAN FAIZ", "LEYVINIAA JAHYAVIKNES SHAN", "NUR AAFIYAH BINTI MUHAMMAD HAKIIM", "NUR AALIYA ZAHRA BINTI MUHAMMAD MUIZZUDDIN", "NUR AIRIS SOFEA BINTI MOHAMAD YUHANIF", "NUR AISYAH ZAHIRAH BINTI MUHAMMAD AKMAL", "NUR AULIYA SAFFIYAH BINTI MUHAMMAD FITRIASHRAF", "NUR MARISSA BINTI MOHD FITRI", "NUR RAISHA ZAFIRAH BINTI PAHROLRAZI", "NUR ZAHIRA BINTI SYAROLRIZAL", "NUREEN MIKAYLA BINTI RUSDI AZIZ", "NURUL AMIRAH SOFIA BINTI ABDULLAH", "PUTERI BALQIS BINTI KAMALRULZAMAN", "PUTERI QAYRA AFIYA BINTI MOHD AMIRUL ANUAR", "QURRATUL UMNI HANIYYA BINTI MOHD RIDZUAN", "RAJA NELISSA BINTI RAJA HAZREN", "RAPHEALLA MOHAN", "RIZQ RUMAISA BINTI MOHD RIZAL", "RUMAISHA BINTI AB ZILJALALI WALIKRAM", "SAGISHNA A/P DINNAISH", "SHAMITA MOHAN GANES", "SITI NURHAFIZAH BINTI HELMI", "SITI SUHAILA SYAHIRAH BINTI MUHAMAD SAIFULIZAM", "SOFIA NUR AISHAH BINTI MOHD ZAMRIE", "SOFIA NUR ZULAIKHA BINTI MOHD ZAMRIE", "SREESHA NAIR A/P JANATHERAN NAIR", "YUSRIENA DELISHA BINTI MOHAMAD YUSOF", "ZIA AINUL MARDHIAH BINTI MOHD ZAIM"],
         "1 Camellia": ["AFIQAH BINTI HALIDZAN", "AL ZAHRA ROSE BINTI JEFRY", "AZZA ZINNIRAH BINTI MUHAMMAD ZARUL AZUANDI", "DHIA INARA BINTI MUHAMMAD ISHAM", "DHIA SOFEA AZZAHRA BINTI MOHD FAISAL", "DIAN SURFINA BINTI MOHD SAZALI", "HANAN INARA BINTI MOHD SHAHRIN", "HUZAIRAH FARZEEN BINTI MUHAMMAD HASHIM", "JAYASREE A/P SARAVANAN", "KAMAL EYDENE AMEENA BINTI KAMAL ARIFIN", "LENISHA A/P MUKKESH", "MALAIQA HUMAIRA BINTI ZULKIFLI", "MIA ZAREEN QHADIJAH BINTI KHAIRUL BAHARI", "NOR FARISHA NAURA BINTI MUHAMAD NOR FAKHRI", "NUR AATHIFAH MAWIYAH BINTI MOHD AZAHAR", "NUR HIDAYATUL HUSNA BINTI MUHAMMAD FIRDAUS", "NUR IMANI HUMAIRAH BINTI SHAHROL NIZAM", "NUR KHAIRIN AAFIYAH BINTI MUHAMMAD KAMAL", "NUR KHAWLAH ZINNIRAH BINTI HAIRUL RIZUAN", "NUR NAINA AMIRA AMSYAR BINTI UMAR AMSYAR SURESH", "NUR QASEH ELSABELLA BINTI ROSDI", "NUR QASIH MIKAYLA BINTI MOHD EFFENDY", "NUR RAISHA IRDINA BINTI MOHD.RIZUWAN", "NUR ZAFREENAH BINTI AHMAD", "NUR ZARRA SOFEA BINTI MOHD SAIDY", "NURUL AAFIYAH BINTI MUHAMMAD AZMI", "PUTRI NUR AISYAH ZAHRA BINTI MUHAMMAD ZUFPI", "QASEH DELISHA BINTI SYAHRIZAN", "SHAANELLE NAVYAA RAJ", "SITI AISYAH HUMAIRA BINTI MOHD HAIRY", "THIYALINI A/P THIAGU", "ZARYN AEESYA BINTI AMIR AIZAT"],
@@ -287,116 +186,127 @@
         "6 Camellia": ["ANUSREE A/P NAVANITHAN", "DAKSHAYANI A/P KANAPATHY", "DAMIA QADYRA BINTI ROZLAN", "DESNA A/P DASS", "EAVANAYSA A/P V.DEVANTHIRAN", "GAYATHRI DORAISINGAM", "INARAH QASRINA BINTI MOHD ANDRIAN", "MASROTUL SUFEYA BT MOHD RIDUAN", "NOR ADELIA MARDHIYAH BINTI MOHD AZAHAR", "NOR RAFIDAH BINTI ABD.RAHIM", "NUR ADRIANA SAFFIYA BINTI NUR HAEYRY", "NUR AAIN MIM BINTI SHAMIM HOSSSAIN MUKLES", "NUR AISY ARISSA BINTI KUZAIRI HEZRI", "NUR ALEESYA SOFEA BINTI NOORADZLAN", "NUR ALISYA AMANDA BT MOHD HARMIZY", "NUR AUNI MAISARAH BINTI NORMAN", "NUR DAMIA QATRUNNADA BINTI AHMAD SUYUTI", "NUR EISHAL HUMAIRA BINTI MOHD FAISAL", "NUR JANNAH HUMAIRA BINTI MOHD IZUAN", "NUR SYAFIRA BINTI UJANG", "NUR SYAKIRA ZULAIQHA BINTI BADRUL HISAM", "NURNAILAHNAJWA BINTI NAZRI", "NURUL DAMIA BT ZULKARNAIN", "OVIYA A/P SELVARAJOO", "PUTRI QISTINA BATRISYA BINTI ASWADI", "PUTRI YASMEEN MAISARA BINTI HIDHIR SUFFI", "QALISYA NUR' JANNAH BINTI RAMIZAL", "QASEH RANIA BINTI ZAFRULNIZAM", "RAYHANNA DAYANA BINTI MD RAZALI", "SITI NUR SAFINA BINTI SEIKH OMAR", "SUJEETHAJI A/P JIVA NANTHAN", "VENOLINA JASON RAJ", "YOGALAXSHME A/P DASS"]
     };
 
-    let pieChart;
-    function initChart(sudah, belum) {
-        const ctx = document.getElementById('pieChart').getContext('2d');
-        if(pieChart) pieChart.destroy();
-        pieChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Selesai', 'Belum'],
-                datasets: [{
-                    data: [sudah, belum],
-                    backgroundColor: ['#22c55e', '#ef4444'],
-                    hoverOffset: 10,
-                    borderWidth: 0
-                }]
-            },
-            options: { cutout: '80%', plugins: { legend: { display: false } } }
-        });
-    }
+    // Inisialisasi Dropdown
+    const selKelas = document.getElementById('selKelas');
+    const selNama = document.getElementById('selNama');
+    
+    selKelas.innerHTML = '<option value="">Pilih Kelas</option>';
+    Object.keys(rawData).forEach(k => {
+        selKelas.innerHTML += `<option value="${k}">${k}</option>`;
+    });
 
-    const selK = document.getElementById('selKelas');
-    selK.innerHTML = '<option value="">-- Pilih Kelas --</option>';
-    Object.keys(rawData).forEach(k => selK.innerHTML += `<option value="${k}">${k}</option>`);
-
-    document.getElementById('selKelas').onchange = function() {
-        const selN = document.getElementById('selNama');
-        selN.innerHTML = '<option value="">-- Pilih Nama --</option>';
-        if(rawData[this.value]) {
-            rawData[this.value].sort().forEach(n => selN.innerHTML += `<option value="${n}">${n}</option>`);
+    selKelas.onchange = () => {
+        selNama.innerHTML = '<option value="">Pilih Nama</option>';
+        if(rawData[selKelas.value]) {
+            rawData[selKelas.value].sort().forEach(n => {
+                selNama.innerHTML += `<option value="${n}">${n}</option>`;
+            });
         }
     };
 
-    document.getElementById('btnAdmin').onclick = function() {
-        if(!isAdmin) {
-            if(prompt("Admin Password:") === "admin123") {
-                isAdmin = true;
-                this.style.color = '#ef4444';
-                document.querySelectorAll('.admin-col').forEach(el => el.classList.remove('d-none'));
-            }
-        } else { location.reload(); }
-    };
-
-    document.getElementById('btnSimpan').onclick = function() {
-        const n = document.getElementById('selNama').value;
-        const k = document.getElementById('selKelas').value;
+    // Fungsi Simpan
+    document.getElementById('btnSimpan').onclick = () => {
+        const k = selKelas.value;
+        const n = selNama.value;
         const a = document.getElementById('selAmaun').value;
-        if(!n || !k) return alert("Sila lengkapkan pilihan!");
-        push(dbRef, { nama: n, kelas: k, amaun: parseInt(a), tarikh: new Date().toLocaleString('ms-MY') });
-        alert("Rekod disimpan!");
+        if(!k || !n) return alert("Sila pilih kelas dan nama!");
+        push(dbRef, { nama: n, kelas: k, amaun: parseInt(a), tarikh: new Date().toLocaleString() });
+        alert("Berjaya disimpan!");
     };
 
+    // Fungsi Admin
+    let isAdmin = false;
+    document.getElementById('btnAdmin').onclick = () => {
+        const pw = prompt("Sila masukkan kata laluan:");
+        if(pw === "admin123") {
+            isAdmin = true;
+            document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'table-cell');
+            alert("Mod Admin Aktif");
+        }
+    };
+
+    // Papar Data
+    let myChart;
     onValue(dbRef, (snap) => {
         const data = snap.val() || {};
-        const entries = Object.entries(data).reverse();
-        const listSudah = document.getElementById('listSudah');
-        const listBelum = document.getElementById('listBelum');
-        listSudah.innerHTML = ""; listBelum.innerHTML = "";
+        const sudahBody = document.getElementById('listSudah');
+        const belumBody = document.getElementById('listBelum');
+        sudahBody.innerHTML = ""; belumBody.innerHTML = "";
+        
+        let tKoleksi = 0, tPIBG = 0, tExtra = 0, countS = 0;
+        let muridSelesai = new Set();
 
-        let tKoleksi = 0, tPIBG = 0, tExtra = 0;
-        let setSelesai = new Set();
-
-        entries.forEach(([id, item]) => {
+        Object.entries(data).reverse().forEach(([id, item]) => {
+            countS++;
             tKoleksi += item.amaun;
-            setSelesai.add(item.nama);
+            muridSelesai.add(item.nama);
+            
             if(item.amaun === 170) { tPIBG += 100; tExtra += 70; }
             else if(item.amaun === 100) { tPIBG += 100; }
-            else if(item.amaun === 70) { tExtra += 70; }
+            else { tExtra += 70; }
 
-            listSudah.innerHTML += `<tr>
-                <td class="fw-bold">${item.nama}</td>
+            sudahBody.innerHTML += `<tr>
+                <td>${item.nama}</td>
                 <td>${item.kelas}</td>
-                <td><span class="badge badge-amt">RM ${item.amaun}</span></td>
-                <td class="admin-col ${isAdmin?'':'d-none'}">
-                    <button class="btn btn-sm text-danger" onclick="window.padam('${id}')"><i class="fas fa-trash"></i></button>
+                <td><span class="badge bg-success">RM ${item.amaun}</span></td>
+                <td class="admin-only" style="display:${isAdmin?'table-cell':'none'}">
+                    <button class="btn btn-sm btn-danger" onclick="window.hapus('${id}')"><i class="fas fa-trash"></i></button>
                 </td>
             </tr>`;
         });
 
+        // Senarai Belum Bayar
         let countB = 0;
-        Object.keys(rawData).forEach(kls => {
-            rawData[kls].forEach(murid => {
-                if(!setSelesai.has(murid)) {
+        Object.keys(rawData).forEach(k => {
+            rawData[k].forEach(m => {
+                if(!muridSelesai.has(m)) {
                     countB++;
-                    listBelum.innerHTML += `<tr>
-                        <td class="fw-bold text-muted">${murid}</td>
-                        <td class="small">${kls}</td>
-                        <td class="text-end"><span class="badge badge-pending">BELUM</span></td>
+                    belumBody.innerHTML += `<tr>
+                        <td>${m}</td>
+                        <td>${k}</td>
+                        <td><span class="badge bg-danger">BELUM</span></td>
                     </tr>`;
                 }
             });
         });
 
+        // Update UI
         document.getElementById('totalSemasa').innerText = "RM " + tKoleksi;
         document.getElementById('totalPIBG').innerText = "RM " + tPIBG;
         document.getElementById('totalExtra').innerText = "RM " + tExtra;
-        document.getElementById('countSelesai').innerText = setSelesai.size;
-        
-        initChart(setSelesai.size, countB);
+        document.getElementById('countSelesai').innerText = muridSelesai.size;
+
+        updateChart(muridSelesai.size, countB);
     });
 
-    window.padam = (id) => { if(confirm("Hapus rekod ini?")) remove(ref(db, `yuran_2026/${id}`)); };
+    function updateChart(s, b) {
+        const ctx = document.getElementById('pieChart').getContext('2d');
+        if(myChart) myChart.destroy();
+        myChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Selesai', 'Belum'],
+                datasets: [{ data: [s, b], backgroundColor: ['#28a745', '#dc3545'] }]
+            },
+            options: { plugins: { legend: { position: 'bottom' } } }
+        });
+    }
 
-    document.getElementById('btnDownload').onclick = function() {
-        let csv = "\uFEFFTarikh,Nama,Kelas,Amaun\n";
+    window.hapus = (id) => { if(confirm("Hapus rekod?")) remove(ref(db, `yuran_2026/${id}`)); };
+
+    // Export CSV
+    document.getElementById('btnDownload').onclick = () => {
+        let csv = "\uFEFFNama,Kelas,Amaun,Tarikh\n";
         onValue(dbRef, (s) => {
-            Object.values(s.val()||{}).forEach(r => csv += `"${r.tarikh}","${r.nama}","${r.kelas}","${r.amaun}"\n`);
+            Object.values(s.val() || {}).forEach(r => {
+                csv += `${r.nama},${r.kelas},${r.amaun},${r.tarikh}\n`;
+            });
         }, {onlyOnce: true});
-        const blob = new Blob([csv], { type: 'text/csv' });
-        const a = document.createElement('a'); 
-        a.href = URL.createObjectURL(blob); 
-        a.download = 'Data_Kewangan_2026.csv'; 
+        const blob = new Blob([csv], {type: 'text/csv'});
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.setAttribute('href', url);
+        a.setAttribute('download', 'Laporan_Yuran_2026.csv');
         a.click();
     };
 </script>
