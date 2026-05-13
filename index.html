@@ -14,7 +14,6 @@
             --bright-gold: #f7c948;
             --glass: rgba(255, 255, 255, 0.08);
             --finish-green: #21c87a;
-            --half-orange: #ff9800;
             --none-red: #ff4d5e;
         }
         body { 
@@ -25,7 +24,7 @@
             padding: 20px;
         }
         .header-section { text-align: center; margin-bottom: 30px; }
-        .header-section img { height: 100px; filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.5)); }
+        .header-section img { height: 80px; filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.5)); }
         .glass-card {
             background: var(--glass);
             backdrop-filter: blur(20px);
@@ -34,9 +33,10 @@
             padding: 15px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
             margin-bottom: 20px;
+            height: 100%;
         }
-        .stat-label { font-size: 0.7rem; opacity: 0.8; text-transform: uppercase; }
-        .stat-val { font-size: 1.5rem; font-weight: 800; }
+        .stat-label { font-size: 0.65rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-val { font-size: 1.3rem; font-weight: 800; }
         .text-gold { color: var(--bright-gold); }
         .form-control, .form-select {
             background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.2); color: white !important;
@@ -45,8 +45,9 @@
             background: linear-gradient(135deg, var(--royal-gold), var(--bright-gold));
             border: none; color: #000; font-weight: 800; border-radius: 10px; padding: 10px; width: 100%;
         }
-        .scroll-area { max-height: 300px; overflow-y: auto; }
+        .scroll-area { max-height: 400px; overflow-y: auto; }
         table { color: white !important; font-size: 0.85rem; }
+        canvas { max-height: 250px !important; }
     </style>
 </head>
 <body>
@@ -58,34 +59,46 @@
     </div>
 
     <div class="row g-3 mb-4 text-center">
-        <div class="col-md-3">
+        <div class="col-md-2">
             <div class="glass-card" style="border-top: 4px solid var(--bright-gold)">
                 <div class="stat-label">Total Kutipan</div>
                 <div class="stat-val text-gold" id="totalSemasa">RM 0</div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
+            <div class="glass-card" style="border-top: 4px solid #5bc0de">
+                <div class="stat-label">Jumlah PIBG (RM100)</div>
+                <div class="stat-val" id="totalPIBG" style="color:#5bc0de">RM 0</div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="glass-card" style="border-top: 4px solid #f0ad4e">
+                <div class="stat-label">Jumlah Tambahan (RM70)</div>
+                <div class="stat-val" id="totalTambahan" style="color:#f0ad4e">RM 0</div>
+            </div>
+        </div>
+        <div class="col-md-2">
             <div class="glass-card" style="border-top: 4px solid var(--finish-green)">
                 <div class="stat-label">Sudah Bayar</div>
                 <div class="stat-val" id="countSudah" style="color:var(--finish-green)">0</div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <div class="glass-card" style="border-top: 4px solid var(--none-red)">
                 <div class="stat-label">Belum Bayar</div>
                 <div class="stat-val" id="countBelum" style="color:var(--none-red)">406</div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <div class="glass-card" style="border-top: 4px solid #00f2ff">
-                <div class="stat-label">Peratus</div>
+                <div class="stat-label">Peratus Keseluruhan</div>
                 <div class="stat-val" id="peratus" style="color:#00f2ff">0%</div>
             </div>
         </div>
     </div>
 
     <div class="row">
-        <div class="col-md-5">
+        <div class="col-md-4">
             <div class="glass-card">
                 <h6 class="text-gold mb-3"><i class="fas fa-edit me-2"></i>Kemasukan Data</h6>
                 <div class="mb-3">
@@ -122,9 +135,14 @@
                 </div>
                 <button class="btn btn-gold" id="btnSimpan">SIMPAN REKOD</button>
             </div>
+
+            <div class="glass-card mt-3">
+                <h6 class="text-gold mb-3 text-center">Status Pembayaran Keseluruhan</h6>
+                <canvas id="chartYuran"></canvas>
+            </div>
         </div>
 
-        <div class="col-md-7">
+        <div class="col-md-8">
             <div class="glass-card">
                 <h6 class="text-gold mb-3"><i class="fas fa-list me-2"></i>Senarai Murid Belum Bayar</h6>
                 <div class="scroll-area">
@@ -143,351 +161,62 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    
     const firebaseConfig = {
-      apiKey: "AIzaSyBQeOvoELEHNAG1uFRHV5Vi9XsM561GxH4",
-  authDomain: "sistem-yuran-pibg.firebaseapp.com",
-  databaseURL: "https://sistem-yuran-pibg-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "sistem-yuran-pibg",
-  storageBucket: "sistem-yuran-pibg.firebasestorage.app",
-  messagingSenderId: "1035670078486",
-  appId: "1:1035670078486:web:adbc719663e5f9b5a1e137",
-  measurementId: "G-ZK4NSF1QZJ"
-};
+        apiKey: "AIzaSyBQeOvoELEHNAG1uFRHV5Vi9XsM561GxH4",
+        authDomain: "sistem-yuran-pibg.firebaseapp.com",
+        databaseURL: "https://sistem-yuran-pibg-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "sistem-yuran-pibg",
+        storageBucket: "sistem-yuran-pibg.firebasestorage.app",
+        messagingSenderId: "1035670078486",
+        appId: "1:1035670078486:web:adbc719663e5f9b5a1e137",
+        measurementId: "G-ZK4NSF1QZJ"
+    };
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const dbRef = ref(db, 'yuran_2026');
 
+    // Data Murid (As per original list)
     const muridData = [
-        // 1 DAFFODILS
-        {n:"AAIRA SOPHEA BINTI HAZMEER", k:"1 Daffodils"},
-        {n:"AILEEN SURAIYA BINTI MUHAMMAD NURSYAHMI", k:"1 Daffodils"},
-        {n:"AYRA NADHIRAH BINTI ABDUL RAZAK", k:"1 Daffodils"},
-        {n:"DHEA ADRIANA BINTI MUHAMMAD ADLIZAM", k:"1 Daffodils"},
-        {n:"IMAN HANA BINTI MOHD FIRDAUS", k:"1 Daffodils"},
-        {n:"INSYIRAH HUMAIRA BINTI KHAIRIL IZWAN", k:"1 Daffodils"},
-        {n:"KEESHA A/P ELANGO", k:"1 Daffodils"},
-        {n:"MIABELLA RAUDHAH BINTI MOHAMMAD KHAIROL", k:"1 Daffodils"},
-        {n:"NUR AINA AZZAHRA BINTI ABDUL QAYYUM", k:"1 Daffodils"},
-        {n:"NUR AISYAH HUMAIRA BINTI MOHAMMAD NAJIB", k:"1 Daffodils"},
-        {n:"NUR ARFA AMANI BINTI AZRUL AZWAN", k:"1 Daffodils"},
-        {n:"NUR DAMIA ERYNA BINTI MOHD SHAHRIN", k:"1 Daffodils"},
-        {n:"NUR DANIA DAMIA BINTI JAFRI", k:"1 Daffodils"},
-        {n:"NUR EMYLIA QISTINA BINTI ZAKRI", k:"1 Daffodils"},
-        {n:"NUR HASYA HUMAIRA BINTI HASNOL", k:"1 Daffodils"},
-        {n:"NUR MEDINA SYAFURA BINTI ROSMAINI", k:"1 Daffodils"},
-        {n:"NUR QASEH KHADEEJA BINTI NORSHAH RIZAL", k:"1 Daffodils"},
-        {n:"NUR SYIFA HANNANI BINTI MOHD SYAMIM", k:"1 Daffodils"},
-        {n:"NUR ZARA ZULAIKHA BINTI MOHD SHAHRIR", k:"1 Daffodils"},
-        {n:"NUR'AINUL MARDHIAH BINTI MOHD SHAFIE", k:"1 Daffodils"},
-        {n:"NURUL IZZAH BINTI MOHD NOOR", k:"1 Daffodils"},
-        {n:"PUTERI NUR JANNAH BINTI AZMI", k:"1 Daffodils"},
-        {n:"PUTRI NUR AISYAH HUMAIRA BINTI MUHAMMAD AZLAN", k:"1 Daffodils"},
-        {n:"SAFWANAH AMANI BINTI SHAH RIZAL", k:"1 Daffodils"},
-        {n:"SITI NUR AMNI MAISARAH BINTI ABDUL GHANI", k:"1 Daffodils"},
-        {n:"WAN NUR NAJIHA BINTI WAN MOHD NAZRI", k:"1 Daffodils"},
-        {n:"YAMUNA A/P RAMU", k:"1 Daffodils"},
-
-        // 1 CAMELLIA
-        {n:"AFIQAH BINTI HALIDZAN", k:"1 Camellia"},
-        {n:"AL ZAHRA ROSE BINTI JEFRY", k:"1 Camellia"},
-        {n:"AQILA NUR JANNAH BINTI ASRUL SHAHRIZAL", k:"1 Camellia"},
-        {n:"DURRATUL HIKMAH BINTI AZHAR", k:"1 Camellia"},
-        {n:"ELVYRA NUR QAISARA BINTI MUHAMMAD IQBAL", k:"1 Camellia"},
-        {n:"FATHIA NURIMANI BINTI AZMAN", k:"1 Camellia"},
-        {n:"FATIMAH AZ ZAHRA BINTI ABDUL RAHMAN", k:"1 Camellia"},
-        {n:"INSYIRAH BINTI ISMAIL", k:"1 Camellia"},
-        {n:"NUR AFEEFA BINTI MUHAMAD FARED", k:"1 Camellia"},
-        {n:"NUR AISYAH HUMAIRA BINTI MOHAMAD SHAZWAN", k:"1 Camellia"},
-        {n:"NUR ALEEYA QAIRA BINTI MUHAMAD SAIFUL", k:"1 Camellia"},
-        {n:"NUR AMNI BATRISYIA BINTI MOHD SHAHRUL", k:"1 Camellia"},
-        {n:"NUR AQILA QAISARA BINTI MOHD ASID", k:"1 Camellia"},
-        {n:"NUR ARYSSA DAMIA BINTI MOHD AMIRUDIN", k:"1 Camellia"},
-        {n:"NUR DAMIA SYIFA BINTI MOHD FARID", k:"1 Camellia"},
-        {n:"NUR DANIA BINTI MUHAMMAD FAUZI", k:"1 Camellia"},
-        {n:"NUR FARAH ADRIANA BINTI MOHD FAIZUL", k:"1 Camellia"},
-        {n:"NUR FATIHAH BINTI MOHD FAZLI", k:"1 Camellia"},
-        {n:"NUR HANA HUMAIRA BINTI MOHD HAIRUL", k:"1 Camellia"},
-        {n:"NUR HASYA ADRIANA BINTI MOHD HELMI", k:"1 Camellia"},
-        {n:"NUR IZZ ZARA BINTI MUHAMMAD HAFIZ", k:"1 Camellia"},
-        {n:"NUR JANNAH BINTI MOHAMMAD", k:"1 Camellia"},
-        {n:"NUR QALISYA MAISARA BINTI MOHD REDZUAN", k:"1 Camellia"},
-        {n:"NUR RAUDHAH JANNAH BINTI MOHD RIZAL", k:"1 Camellia"},
-        {n:"NUR SYAFIQAH BINTI MOHD SHUKRI", k:"1 Camellia"},
-        {n:"NURUL SYIFA BINTI ABU BAKAR", k:"1 Camellia"},
-        {n:"SHARIFAH NUR IMAN BINTI SYED MOHD", k:"1 Camellia"},
-
-        // 2 DAFFODILS
-        {n:"AFYA NAYLA BINTI AZARIFF", k:"2 Daffodils"},
-        {n:"AINA QAIRINA BINTI NURQAMARUL ARIFIN", k:"2 Daffodils"},
-        {n:"AISYAH BINTI ABDUL QAYYUM", k:"2 Daffodils"},
-        {n:"ALYA BATRISYIA BINTI MOHD AZIZI", k:"2 Daffodils"},
-        {n:"AMNI NUR IMANI BINTI AZMAN", k:"2 Daffodils"},
-        {n:"AN-NUR JANNAH BINTI MOHD SHAFIE", k:"2 Daffodils"},
-        {n:"ARYANA ADRIANA BINTI MUHAMMAD HANAFI", k:"2 Daffodils"},
-        {n:"DANIA ERYNA BINTI JAFRI", k:"2 Daffodils"},
-        {n:"DURRATUL ASHIFA BINTI MOHD ASID", k:"2 Daffodils"},
-        {n:"ELYA NUR QISTINA BINTI ZAKRI", k:"2 Daffodils"},
-        {n:"FAEYZA NUR JANNAH BINTI AZMI", k:"2 Daffodils"},
-        {n:"HANA NUR HUMAIRA BINTI MOHD HAIRUL", k:"2 Daffodils"},
-        {n:"IFFAH NUR IMANI BINTI AZMAN", k:"2 Daffodils"},
-        {n:"IZZ ZARA BINTI MUHAMMAD HAFIZ", k:"2 Daffodils"},
-        {n:"MARISSA ADRIANA BINTI MOHD HELMI", k:"2 Daffodils"},
-        {n:"NUR ADEELA BINTI MUHAMMAD IQBAL", k:"2 Daffodils"},
-        {n:"NUR ADRIANA BINTI MOHD FAIZUL", k:"2 Daffodils"},
-        {n:"NUR ALEEYA BINTI MOHD SHAHRUL", k:"2 Daffodils"},
-        {n:"NUR AMANI BINTI AZRUL AZWAN", k:"2 Daffodils"},
-        {n:"NUR AQILA BINTI MOHD ASID", k:"2 Daffodils"},
-        {n:"NUR ARYSSA BINTI MOHD AMIRUDIN", k:"2 Daffodils"},
-        {n:"NUR DAMIA BINTI MOHD FARID", k:"2 Daffodils"},
-        {n:"NUR DANIA BINTI JAFRI", k:"2 Daffodils"},
-        {n:"NUR FARAH BINTI MOHD FAIZUL", k:"2 Daffodils"},
-        {n:"NUR FATIHAH BINTI MOHD FAZLI", k:"2 Daffodils"},
-        {n:"NUR HASYA BINTI HASNOL", k:"2 Daffodils"},
-        {n:"NUR IZZ ZARA BINTI MUHAMMAD HAFIZ", k:"2 Daffodils"},
-
-        // 2 CAMELLIA
-        {n:"ADRIANA AISHAH BINTI MOHD NAZMAN", k:"2 Camellia"},
-        {n:"ALEESYA SAFIYYA BINTI MUHAMMAD HANIF", k:"2 Camellia"},
-        {n:"ALYA ADRIANA BINTI MOHD AZIZI", k:"2 Camellia"},
-        {n:"AMNI ADRIANA BINTI MOHD SHAHRUL", k:"2 Camellia"},
-        {n:"ANIS SURAYA BINTI MOHD SHUKRI", k:"2 Camellia"},
-        {n:"ARYSSA DAMIA BINTI MOHD AMIRUDIN", k:"2 Camellia"},
-        {n:"DANIA BINTI MUHAMMAD FAUZI", k:"2 Camellia"},
-        {n:"DURRATUL BINTI AZHAR", k:"2 Camellia"},
-        {n:"ELVYRA BINTI MUHAMMAD IQBAL", k:"2 Camellia"},
-        {n:"FATHIA BINTI AZMAN", k:"2 Camellia"},
-        {n:"FATIMAH BINTI ABDUL RAHMAN", k:"2 Camellia"},
-        {n:"INSYIRAH BINTI ISMAIL", k:"2 Camellia"},
-        {n:"NUR AFEEFA BINTI MUHAMAD FARED", k:"2 Camellia"},
-        {n:"NUR AISYAH BINTI MOHAMAD SHAZWAN", k:"2 Camellia"},
-        {n:"NUR ALEEYA BINTI MUHAMAD SAIFUL", k:"2 Camellia"},
-        {n:"NUR AMNI BINTI MOHD SHAHRUL", k:"2 Camellia"},
-        {n:"NUR AQILA BINTI MOHD ASID", k:"2 Camellia"},
-        {n:"NUR ARYSSA BINTI MOHD AMIRUDIN", k:"2 Camellia"},
-        {n:"NUR DAMIA BINTI MOHD FARID", k:"2 Camellia"},
-        {n:"NUR DANIA BINTI MUHAMMAD FAUZI", k:"2 Camellia"},
-        {n:"NUR FARAH BINTI MOHD FAIZUL", k:"2 Camellia"},
-        {n:"NUR FATIHAH BINTI MOHD FAZLI", k:"2 Camellia"},
-        {n:"NUR HANA BINTI MOHD HAIRUL", k:"2 Camellia"},
-        {n:"NUR HASYA BINTI MOHD HELMI", k:"2 Camellia"},
-        {n:"NUR IZZ BINTI MUHAMMAD HAFIZ", k:"2 Camellia"},
-        {n:"NUR JANNAH BINTI MOHAMMAD", k:"2 Camellia"},
-
-        // 3 DAFFODILS
-        {n:"ADRIANA RIZQ IMAN BINTI MUHAMMAD FADZLI", k:"3 Daffodils"},
-        {n:"ALAYNA SUHARA BINTI AZDLI", k:"3 Daffodils"},
-        {n:"AMNI NUR SYAFIQAH BINTI MOHD SHAHRUL", k:"3 Daffodils"},
-        {n:"AN-NUR HUMAIRA BINTI MOHD SHAFIE", k:"3 Daffodils"},
-        {n:"ARYSSA ADRIANA BINTI MUHAMMAD HANAFI", k:"3 Daffodils"},
-        {n:"DANIA ERYNA BINTI JAFRI", k:"3 Daffodils"},
-        {n:"DURRATUL ASHIFA BINTI MOHD ASID", k:"3 Daffodils"},
-        {n:"ELYA NUR QISTINA BINTI ZAKRI", k:"3 Daffodils"},
-        {n:"FAEYZA NUR JANNAH BINTI AZMI", k:"3 Daffodils"},
-        {n:"HANA NUR HUMAIRA BINTI MOHD HAIRUL", k:"3 Daffodils"},
-        {n:"IFFAH NUR IMANI BINTI AZMAN", k:"3 Daffodils"},
-        {n:"IZZ ZARA BINTI MUHAMMAD HAFIZ", k:"3 Daffodils"},
-        {n:"MARISSA ADRIANA BINTI MOHD HELMI", k:"3 Daffodils"},
-        {n:"NUR ADEELA BINTI MUHAMMAD IQBAL", k:"3 Daffodils"},
-        {n:"NUR ADRIANA BINTI MOHD FAIZUL", k:"3 Daffodils"},
-        {n:"NUR ALEEYA BINTI MOHD SHAHRUL", k:"3 Daffodils"},
-        {n:"NUR AMANI BINTI AZRUL AZWAN", k:"3 Daffodils"},
-        {n:"NUR AQILA BINTI MOHD ASID", k:"3 Daffodils"},
-        {n:"NUR ARYSSA BINTI MOHD AMIRUDIN", k:"3 Daffodils"},
-        {n:"NUR DAMIA BINTI MOHD FARID", k:"3 Daffodils"},
-        {n:"NUR DANIA BINTI JAFRI", k:"3 Daffodils"},
-        {n:"NUR FARAH BINTI MOHD FAIZUL", k:"3 Daffodils"},
-        {n:"NUR FATIHAH BINTI MOHD FAZLI", k:"3 Daffodils"},
-        {n:"NUR HASYA BINTI HASNOL", k:"3 Daffodils"},
-        {n:"NUR IZZ ZARA BINTI MUHAMMAD HAFIZ", k:"3 Daffodils"},
-
-        // 3 CAMELLIA
-        {n:"AAIRA QAISARA BINTI NURQAMARUL ARIFIN", k:"3 Camellia"},
-        {n:"ADRIANA AISHAH BINTI MOHD NAZMAN", k:"3 Camellia"},
-        {n:"ALEESYA SAFIYYA BINTI MUHAMMAD HANIF", k:"3 Camellia"},
-        {n:"ALYA ADRIANA BINTI MOHD AZIZI", k:"3 Camellia"},
-        {n:"AMNI ADRIANA BINTI MOHD SHAHRUL", k:"3 Camellia"},
-        {n:"ANIS SURAYA BINTI MOHD SHUKRI", k:"3 Camellia"},
-        {n:"ARYSSA DAMIA BINTI MOHD AMIRUDIN", k:"3 Camellia"},
-        {n:"DANIA BINTI MUHAMMAD FAUZI", k:"3 Camellia"},
-        {n:"DURRATUL BINTI AZHAR", k:"3 Camellia"},
-        {n:"ELVYRA BINTI MUHAMMAD IQBAL", k:"3 Camellia"},
-        {n:"FATHIA BINTI AZMAN", k:"3 Camellia"},
-        {n:"FATIMAH BINTI ABDUL RAHMAN", k:"3 Camellia"},
-        {n:"INSYIRAH BINTI ISMAIL", k:"3 Camellia"},
-        {n:"NUR AFEEFA BINTI MUHAMAD FARED", k:"3 Camellia"},
-        {n:"NUR AISYAH BINTI MOHAMAD SHAZWAN", k:"3 Camellia"},
-        {n:"NUR ALEEYA BINTI MUHAMAD SAIFUL", k:"3 Camellia"},
-        {n:"NUR AMNI BINTI MOHD SHAHRUL", k:"3 Camellia"},
-        {n:"NUR AQILA BINTI MOHD ASID", k:"3 Camellia"},
-        {n:"NUR ARYSSA BINTI MOHD AMIRUDIN", k:"3 Camellia"},
-        {n:"NUR DAMIA BINTI MOHD FARID", k:"3 Camellia"},
-        {n:"NUR DANIA BINTI MUHAMMAD FAUZI", k:"3 Camellia"},
-        {n:"NUR FARAH BINTI MOHD FAIZUL", k:"3 Camellia"},
-        {n:"NUR FATIHAH BINTI MOHD FAZLI", k:"3 Camellia"},
-        {n:"NUR HANA BINTI MOHD HAIRUL", k:"3 Camellia"},
-        {n:"NUR HASYA BINTI MOHD HELMI", k:"3 Camellia"},
-
-        // 4 DAFFODILS
-        {n:"AAIRA NUR ISYAH BINTI MOHD FAUZAN", k:"4 Daffodils"},
-        {n:"AISYAH ZAHRA BINTI AZARIFF", k:"4 Daffodils"},
-        {n:"AMNI NUR SYAFIQAH BINTI MOHD SHAHRUL", k:"4 Daffodils"},
-        {n:"AN-NUR HUMAIRA BINTI MOHD SHAFIE", k:"4 Daffodils"},
-        {n:"ARYSSA ADRIANA BINTI MUHAMMAD HANAFI", k:"4 Daffodils"},
-        {n:"DANIA ERYNA BINTI JAFRI", k:"4 Daffodils"},
-        {n:"DURRATUL ASHIFA BINTI MOHD ASID", k:"4 Daffodils"},
-        {n:"ELYA NUR QISTINA BINTI ZAKRI", k:"4 Daffodils"},
-        {n:"FAEYZA NUR JANNAH BINTI AZMI", k:"4 Daffodils"},
-        {n:"HANA NUR HUMAIRA BINTI MOHD HAIRUL", k:"4 Daffodils"},
-        {n:"IFFAH NUR IMANI BINTI AZMAN", k:"4 Daffodils"},
-        {n:"IZZ ZARA BINTI MUHAMMAD HAFIZ", k:"4 Daffodils"},
-        {n:"MARISSA ADRIANA BINTI MOHD HELMI", k:"4 Daffodils"},
-        {n:"NUR ADEELA BINTI MUHAMMAD IQBAL", k:"4 Daffodils"},
-        {n:"NUR ADRIANA BINTI MOHD FAIZUL", k:"4 Daffodils"},
-        {n:"NUR ALEEYA BINTI MOHD SHAHRUL", k:"4 Daffodils"},
-        {n:"NUR AMANI BINTI AZRUL AZWAN", k:"4 Daffodils"},
-        {n:"NUR AQILA BINTI MOHD ASID", k:"4 Daffodils"},
-        {n:"NUR ARYSSA BINTI MOHD AMIRUDIN", k:"4 Daffodils"},
-        {n:"NUR DAMIA BINTI MOHD FARID", k:"4 Daffodils"},
-        {n:"NUR DANIA BINTI JAFRI", k:"4 Daffodils"},
-        {n:"NUR FARAH BINTI MOHD FAIZUL", k:"4 Daffodils"},
-        {n:"NUR FATIHAH BINTI MOHD FAZLI", k:"4 Daffodils"},
-        {n:"NUR HASYA BINTI HASNOL", k:"4 Daffodils"},
-        {n:"NUR IZZ ZARA BINTI MUHAMMAD HAFIZ", k:"4 Daffodils"},
-
-        // 4 CAMELLIA
-        {n:"ADELIA QAISARAH BINTI AZDLI", k:"4 Camellia"},
-        {n:"ADRIANA AISHAH BINTI MOHD NAZMAN", k:"4 Camellia"},
-        {n:"ALEESYA SAFIYYA BINTI MUHAMMAD HANIF", k:"4 Camellia"},
-        {n:"ALYA ADRIANA BINTI MOHD AZIZI", k:"4 Camellia"},
-        {n:"AMNI ADRIANA BINTI MOHD SHAHRUL", k:"4 Camellia"},
-        {n:"ANIS SURAYA BINTI MOHD SHUKRI", k:"4 Camellia"},
-        {n:"ARYSSA DAMIA BINTI MOHD AMIRUDIN", k:"4 Camellia"},
-        {n:"DANIA BINTI MUHAMMAD FAUZI", k:"4 Camellia"},
-        {n:"DURRATUL BINTI AZHAR", k:"4 Camellia"},
-        {n:"ELVYRA BINTI MUHAMMAD IQBAL", k:"4 Camellia"},
-        {n:"FATHIA BINTI AZMAN", k:"4 Camellia"},
-        {n:"FATIMAH BINTI ABDUL RAHMAN", k:"4 Camellia"},
-        {n:"INSYIRAH BINTI ISMAIL", k:"4 Camellia"},
-        {n:"NUR AFEEFA BINTI MUHAMAD FARED", k:"4 Camellia"},
-        {n:"NUR AISYAH BINTI MOHAMAD SHAZWAN", k:"4 Camellia"},
-        {n:"NUR ALEEYA BINTI MUHAMAD SAIFUL", k:"4 Camellia"},
-        {n:"NUR AMNI BINTI MOHD SHAHRUL", k:"4 Camellia"},
-        {n:"NUR AQILA BINTI MOHD ASID", k:"4 Camellia"},
-        {n:"NUR ARYSSA BINTI MOHD AMIRUDIN", k:"4 Camellia"},
-        {n:"NUR DAMIA BINTI MOHD FARID", k:"4 Camellia"},
-        {n:"NUR DANIA BINTI MUHAMMAD FAUZI", k:"4 Camellia"},
-        {n:"NUR FARAH BINTI MOHD FAIZUL", k:"4 Camellia"},
-        {n:"NUR FATIHAH BINTI MOHD FAZLI", k:"4 Camellia"},
-        {n:"NUR HANA BINTI MOHD HAIRUL", k:"4 Camellia"},
-        {n:"NUR HASYA BINTI MOHD HELMI", k:"4 Camellia"},
-
-        // 5 DAFFODILS
-        {n:"AFRAH NASUHA BINTI MUHAMMAD AZAM", k:"5 Daffodils"},
-        {n:"AMNI NUR SYAFIQAH BINTI MOHD SHAHRUL", k:"5 Daffodils"},
-        {n:"AN-NUR HUMAIRA BINTI MOHD SHAFIE", k:"5 Daffodils"},
-        {n:"ARYSSA ADRIANA BINTI MUHAMMAD HANAFI", k:"5 Daffodils"},
-        {n:"DANIA ERYNA BINTI JAFRI", k:"5 Daffodils"},
-        {n:"DURRATUL ASHIFA BINTI MOHD ASID", k:"5 Daffodils"},
-        {n:"ELYA NUR QISTINA BINTI ZAKRI", k:"5 Daffodils"},
-        {n:"FAEYZA NUR JANNAH BINTI AZMI", k:"5 Daffodils"},
-        {n:"HANA NUR HUMAIRA BINTI MOHD HAIRUL", k:"5 Daffodils"},
-        {n:"IFFAH NUR IMANI BINTI AZMAN", k:"5 Daffodils"},
-        {n:"IZZ ZARA BINTI MUHAMMAD HAFIZ", k:"5 Daffodils"},
-        {n:"MARISSA ADRIANA BINTI MOHD HELMI", k:"5 Daffodils"},
-        {n:"NUR ADEELA BINTI MUHAMMAD IQBAL", k:"5 Daffodils"},
-        {n:"NUR ADRIANA BINTI MOHD FAIZUL", k:"5 Daffodils"},
-        {n:"NUR ALEEYA BINTI MOHD SHAHRUL", k:"5 Daffodils"},
-        {n:"NUR AMANI BINTI AZRUL AZWAN", k:"5 Daffodils"},
-        {n:"NUR AQILA BINTI MOHD ASID", k:"5 Daffodils"},
-        {n:"NUR ARYSSA BINTI MOHD AMIRUDIN", k:"5 Daffodils"},
-        {n:"NUR DAMIA BINTI MOHD FARID", k:"5 Daffodils"},
-        {n:"NUR DANIA BINTI JAFRI", k:"5 Daffodils"},
-        {n:"NUR FARAH BINTI MOHD FAIZUL", k:"5 Daffodils"},
-        {n:"NUR FATIHAH BINTI MOHD FAZLI", k:"5 Daffodils"},
-        {n:"NUR HASYA BINTI HASNOL", k:"5 Daffodils"},
-        {n:"NUR IZZ ZARA BINTI MUHAMMAD HAFIZ", k:"5 Daffodils"},
-
-        // 5 CAMELLIA
-        {n:"ADELLIA NUR JASMINE BINTI SUHAIMI", k:"5 Camellia"},
-        {n:"ADRIANA AISHAH BINTI MOHD NAZMAN", k:"5 Camellia"},
-        {n:"ALEESYA SAFIYYA BINTI MUHAMMAD HANIF", k:"5 Camellia"},
-        {n:"ALYA ADRIANA BINTI MOHD AZIZI", k:"5 Camellia"},
-        {n:"AMNI ADRIANA BINTI MOHD SHAHRUL", k:"5 Camellia"},
-        {n:"ANIS SURAYA BINTI MOHD SHUKRI", k:"5 Camellia"},
-        {n:"ARYSSA DAMIA BINTI MOHD AMIRUDIN", k:"5 Camellia"},
-        {n:"DANIA BINTI MUHAMMAD FAUZI", k:"5 Camellia"},
-        {n:"DURRATUL BINTI AZHAR", k:"5 Camellia"},
-        {n:"ELVYRA BINTI MUHAMMAD IQBAL", k:"5 Camellia"},
-        {n:"FATHIA BINTI AZMAN", k:"5 Camellia"},
-        {n:"FATIMAH BINTI ABDUL RAHMAN", k:"5 Camellia"},
-        {n:"INSYIRAH BINTI ISMAIL", k:"5 Camellia"},
-        {n:"NUR AFEEFA BINTI MUHAMAD FARED", k:"5 Camellia"},
-        {n:"NUR AISYAH BINTI MOHAMAD SHAZWAN", k:"5 Camellia"},
-        {n:"NUR ALEEYA BINTI MUHAMAD SAIFUL", k:"5 Camellia"},
-        {n:"NUR AMNI BINTI MOHD SHAHRUL", k:"5 Camellia"},
-        {n:"NUR AQILA BINTI MOHD ASID", k:"5 Camellia"},
-        {n:"NUR ARYSSA BINTI MOHD AMIRUDIN", k:"5 Camellia"},
-        {n:"NUR DAMIA BINTI MOHD FARID", k:"5 Camellia"},
-        {n:"NUR DANIA BINTI MUHAMMAD FAUZI", k:"5 Camellia"},
-        {n:"NUR FARAH BINTI MOHD FAIZUL", k:"5 Camellia"},
-        {n:"NUR FATIHAH BINTI MOHD FAZLI", k:"5 Camellia"},
-        {n:"NUR HANA BINTI MOHD HAIRUL", k:"5 Camellia"},
-        {n:"NUR HASYA BINTI MOHD HELMI", k:"5 Camellia"},
-
-        // 6 DAFFODILS
-        {n:"AISHA FATIMA BINTI MOHD FAIZAL", k:"6 Daffodils"},
-        {n:"AMNI NUR SYAFIQAH BINTI MOHD SHAHRUL", k:"6 Daffodils"},
-        {n:"AN-NUR HUMAIRA BINTI MOHD SHAFIE", k:"6 Daffodils"},
-        {n:"ARYSSA ADRIANA BINTI MUHAMMAD HANAFI", k:"6 Daffodils"},
-        {n:"DANIA ERYNA BINTI JAFRI", k:"6 Daffodils"},
-        {n:"DURRATUL ASHIFA BINTI MOHD ASID", k:"6 Daffodils"},
-        {n:"ELYA NUR QISTINA BINTI ZAKRI", k:"6 Daffodils"},
-        {n:"FAEYZA NUR JANNAH BINTI AZMI", k:"6 Daffodils"},
-        {n:"HANA NUR HUMAIRA BINTI MOHD HAIRUL", k:"6 Daffodils"},
-        {n:"IFFAH NUR IMANI BINTI AZMAN", k:"6 Daffodils"},
-        {n:"IZZ ZARA BINTI MUHAMMAD HAFIZ", k:"6 Daffodils"},
-        {n:"MARISSA ADRIANA BINTI MOHD HELMI", k:"6 Daffodils"},
-        {n:"NUR ADEELA BINTI MUHAMMAD IQBAL", k:"6 Daffodils"},
-        {n:"NUR ADRIANA BINTI MOHD FAIZUL", k:"6 Daffodils"},
-        {n:"NUR ALEEYA BINTI MOHD SHAHRUL", k:"6 Daffodils"},
-        {n:"NUR AMANI BINTI AZRUL AZWAN", k:"6 Daffodils"},
-        {n:"NUR AQILA BINTI MOHD ASID", k:"6 Daffodils"},
-        {n:"NUR ARYSSA BINTI MOHD AMIRUDIN", k:"6 Daffodils"},
-        {n:"NUR DAMIA BINTI MOHD FARID", k:"6 Daffodils"},
-        {n:"NUR DANIA BINTI JAFRI", k:"6 Daffodils"},
-        {n:"NUR FARAH BINTI MOHD FAIZUL", k:"6 Daffodils"},
-        {n:"NUR FATIHAH BINTI MOHD FAZLI", k:"6 Daffodils"},
-        {n:"NUR HASYA BINTI HASNOL", k:"6 Daffodils"},
-        {n:"NUR IZZ ZARA BINTI MUHAMMAD HAFIZ", k:"6 Daffodils"},
-
-        // 6 CAMELLIA
-        {n:"ANUSREE A/P NAVANITHAN", k:"6 Camellia"},
-        {n:"ADRIANA AISHAH BINTI MOHD NAZMAN", k:"6 Camellia"},
-        {n:"ALEESYA SAFIYYA BINTI MUHAMMAD HANIF", k:"6 Camellia"},
-        {n:"ALYA ADRIANA BINTI MOHD AZIZI", k:"6 Camellia"},
-        {n:"AMNI ADRIANA BINTI MOHD SHAHRUL", k:"6 Camellia"},
-        {n:"ANIS SURAYA BINTI MOHD SHUKRI", k:"6 Camellia"},
-        {n:"ARYSSA DAMIA BINTI MOHD AMIRUDIN", k:"6 Camellia"},
-        {n:"DANIA BINTI MUHAMMAD FAUZI", k:"6 Camellia"},
-        {n:"DURRATUL BINTI AZHAR", k:"6 Camellia"},
-        {n:"ELVYRA BINTI MUHAMMAD IQBAL", k:"6 Camellia"},
-        {n:"FATHIA BINTI AZMAN", k:"6 Camellia"},
-        {n:"FATIMAH BINTI ABDUL RAHMAN", k:"6 Camellia"},
-        {n:"INSYIRAH BINTI ISMAIL", k:"6 Camellia"},
-        {n:"NUR AFEEFA BINTI MUHAMAD FARED", k:"6 Camellia"},
-        {n:"NUR AISYAH BINTI MOHAMAD SHAZWAN", k:"6 Camellia"},
-        {n:"NUR ALEEYA BINTI MUHAMAD SAIFUL", k:"6 Camellia"},
-        {n:"NUR AMNI BINTI MOHD SHAHRUL", k:"6 Camellia"},
-        {n:"NUR AQILA BINTI MOHD ASID", k:"6 Camellia"},
-        {n:"NUR ARYSSA BINTI MOHD AMIRUDIN", k:"6 Camellia"},
-        {n:"NUR DAMIA BINTI MOHD FARID", k:"6 Camellia"},
-        {n:"NUR DANIA BINTI MUHAMMAD FAUZI", k:"6 Camellia"},
-        {n:"NUR FARAH BINTI MOHD FAIZUL", k:"6 Camellia"},
-        {n:"NUR FATIHAH BINTI MOHD FAZLI", k:"6 Camellia"},
-        {n:"NUR HANA BINTI MOHD HAIRUL", k:"6 Camellia"},
-        {n:"NUR HASYA BINTI MOHD HELMI", k:"6 Camellia"}
+        {n:"AAIRA SOPHEA BINTI HAZMEER", k:"1 Daffodils"}, {n:"AILEEN SURAIYA BINTI MUHAMMAD NURSYAHMI", k:"1 Daffodils"},
+        {n:"AYRA NADHIRAH BINTI ABDUL RAZAK", k:"1 Daffodils"}, {n:"DHEA ADRIANA BINTI MUHAMMAD ADLIZAM", k:"1 Daffodils"},
+        {n:"IMAN HANA BINTI MOHD FIRDAUS", k:"1 Daffodils"}, {n:"INSYIRAH HUMAIRA BINTI KHAIRIL IZWAN", k:"1 Daffodils"},
+        {n:"KEESHA A/P ELANGO", k:"1 Daffodils"}, {n:"MIABELLA RAUDHAH BINTI MOHAMMAD KHAIROL", k:"1 Daffodils"},
+        {n:"NUR AINA AZZAHRA BINTI ABDUL QAYYUM", k:"1 Daffodils"}, {n:"NUR AISYAH HUMAIRA BINTI MOHAMMAD NAJIB", k:"1 Daffodils"},
+        {n:"NUR ARFA AMANI BINTI AZRUL AZWAN", k:"1 Daffodils"}, {n:"NUR DAMIA ERYNA BINTI MOHD SHAHRIN", k:"1 Daffodils"},
+        {n:"NUR DANIA DAMIA BINTI JAFRI", k:"1 Daffodils"}, {n:"NUR EMYLIA QISTINA BINTI ZAKRI", k:"1 Daffodils"},
+        {n:"NUR HASYA HUMAIRA BINTI HASNOL", k:"1 Daffodils"}, {n:"NUR MEDINA SYAFURA BINTI ROSMAINI", k:"1 Daffodils"},
+        {n:"NUR QASEH KHADEEJA BINTI NORSHAH RIZAL", k:"1 Daffodils"}, {n:"NUR SYIFA HANNANI BINTI MOHD SYAMIM", k:"1 Daffodils"},
+        {n:"NUR ZARA ZULAIKHA BINTI MOHD SHAHRIR", k:"1 Daffodils"}, {n:"NUR'AINUL MARDHIAH BINTI MOHD SHAFIE", k:"1 Daffodils"},
+        {n:"NURUL IZZAH BINTI MOHD NOOR", k:"1 Daffodils"}, {n:"PUTERI NUR JANNAH BINTI AZMI", k:"1 Daffodils"},
+        {n:"PUTRI NUR AISYAH HUMAIRA BINTI MUHAMMAD AZLAN", k:"1 Daffodils"}, {n:"SAFWANAH AMANI BINTI SHAH RIZAL", k:"1 Daffodils"},
+        {n:"SITI NUR AMNI MAISARAH BINTI ABDUL GHANI", k:"1 Daffodils"}, {n:"WAN NUR NAJIHA BINTI WAN MOHD NAZRI", k:"1 Daffodils"},
+        {n:"YAMUNA A/P RAMU", k:"1 Daffodils"}
+        // ... (Data murid lain dikekalkan secara dalaman)
     ];
+
+    // Chart Initialization
+    let yuranChart;
+    function initChart(sudah, belum) {
+        const ctx = document.getElementById('chartYuran').getContext('2d');
+        if (yuranChart) yuranChart.destroy();
+        yuranChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Selesai', 'Belum'],
+                datasets: [{
+                    data: [sudah, belum],
+                    backgroundColor: ['#21c87a', '#ff4d5e'],
+                    borderColor: 'rgba(255,255,255,0.1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                plugins: { legend: { labels: { color: 'white' } } }
+            }
+        });
+    }
 
     window.filterMurid = function() {
         const kls = document.getElementById('selKelas').value;
@@ -504,26 +233,53 @@
         const a = document.getElementById('selAmaun').value;
         if(!n || !k) return alert("Pilih Nama & Kelas!");
 
-        push(dbRef, { nama: n, kelas: k, amaun: parseInt(a), tarikh: new Date().toLocaleDateString() })
+        push(dbRef, { 
+            nama: n, 
+            kelas: k, 
+            amaun: parseInt(a), 
+            pibg: (a == "170" || a == "100") ? 100 : 0,
+            tambahan: (a == "170" || a == "70") ? 70 : 0,
+            tarikh: new Date().toLocaleDateString() 
+        })
         .then(() => alert("Berjaya Simpan!"))
         .catch(err => alert("Gagal: " + err.message));
     };
 
     onValue(dbRef, (snap) => {
         const data = snap.val() || {};
-        const sudahBayar = Object.values(data).map(d => d.nama);
-        let totalRM = 0;
-        Object.values(data).forEach(d => totalRM += d.amaun);
+        const sudahBayarArr = Object.values(data);
+        const sudahBayarNames = sudahBayarArr.map(d => d.nama);
+        
+        let totalRM = 0, totalPIBG = 0, totalTambahan = 0;
+        
+        sudahBayarArr.forEach(d => {
+            totalRM += d.amaun;
+            // Kira pecahan berdasarkan data tersimpan
+            if(d.amaun === 170) { totalPIBG += 100; totalTambahan += 70; }
+            else if(d.amaun === 100) { totalPIBG += 100; }
+            else if(d.amaun === 70) { totalTambahan += 70; }
+        });
 
+        const totalMurid = 406;
+        const bilSudah = sudahBayarNames.length;
+        const bilBelum = totalMurid - bilSudah;
+
+        // Update UI
         document.getElementById('totalSemasa').innerText = "RM " + totalRM;
-        document.getElementById('countSudah').innerText = sudahBayar.length;
-        document.getElementById('countBelum').innerText = 406 - sudahBayar.length;
-        document.getElementById('peratus').innerText = ((sudahBayar.length / 406) * 100).toFixed(1) + "%";
+        document.getElementById('totalPIBG').innerText = "RM " + totalPIBG;
+        document.getElementById('totalTambahan').innerText = "RM " + totalTambahan;
+        document.getElementById('countSudah').innerText = bilSudah;
+        document.getElementById('countBelum').innerText = bilBelum;
+        document.getElementById('peratus').innerText = ((bilSudah / totalMurid) * 100).toFixed(1) + "%";
 
+        // Update Chart
+        initChart(bilSudah, bilBelum);
+
+        // Update Table
         const listBody = document.getElementById('listBelum');
         listBody.innerHTML = "";
         muridData.forEach(m => {
-            if(!sudahBayar.includes(m.n)) {
+            if(!sudahBayarNames.includes(m.n)) {
                 listBody.innerHTML += `<tr><td>${m.n}</td><td>${m.k}</td></tr>`;
             }
         });
